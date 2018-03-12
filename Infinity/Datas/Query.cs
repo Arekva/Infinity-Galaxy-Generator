@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Infinity.Datas
 {
-    namespace Querry
+    namespace Query
     {
         class Star
         {
@@ -14,17 +14,17 @@ namespace Infinity.Datas
             /// Gives a wanted propertie for a certain star class
             /// </summary>
             /// <param name="starDatas"></param>
-            /// <param name="wantedStarClass"></param>
+            /// <param name="mainPropertie"></param>
             /// <param name="wantedPropertie"></param>
             /// <param name="propertieValue"></param>
-            public static void Specific(Dictionary<string, Dictionary<string, string>> starDatas, string wantedStarClass, string wantedPropertie, out string propertieValue)
+            public static string Specific(Dictionary<string, Dictionary<string, string>> starDatas, string mainPropertie, string wantedPropertie)
             {
-                propertieValue = null;
+                string propertieValue = null;
 
                 foreach (KeyValuePair<string, Dictionary<string, string>> starClass in starDatas)
                 {
                     //If it is the class user wants
-                    if (starClass.Key == wantedStarClass)
+                    if (starClass.Key == mainPropertie)
                     {
                         foreach (KeyValuePair<string, string> starPropertie in starClass.Value)
                         {
@@ -36,6 +36,8 @@ namespace Infinity.Datas
                         }
                     }
                 }
+
+                return propertieValue;
             }
 
             /// <summary>

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Infinity.Datas.Querry;
+using Infinity.Datas.Query;
 
 namespace Infinity.Generators
 {
@@ -76,15 +76,11 @@ namespace Infinity.Generators
 
         public static Dictionary<string, string> Generate(Dictionary<string, Dictionary<string, string>> starDatas)
         {
-            //-- Star Properties
-            //double radius;  //km
-            //double mass;    //kg
-            //double luminosity;  //Solar luminosity
-
+            //-- Star Properties --//
             //double habitableZoneMin;    //AU
             //double habitableZoneBest;   //AU
             //double habitableZoneMax;    //AU
-            //-------------------//
+            //---------------------//
 
             //Creates the dictionary of star's properties
             Dictionary<string, string> properties = new Dictionary<string, string>();
@@ -127,20 +123,19 @@ namespace Infinity.Generators
 
             for (classID = 0; classID < starDatas.Count; classID++)
             {
-                Star.Specific(starDatas, allClasses[classID], "Rarity", out string starFreqS);
+                string starFreqS = Star.Specific(starDatas, allClasses[classID], "Rarity");
                 Double.TryParse(starFreqS, out double starFreq);
 
-                frequency = 99.9;
                 //Gets the surface temperature
                 cumuledFrequencies += starFreq;
                 if (frequency < cumuledFrequencies)
                 {
                     //Gets the minimal temperature possible
-                    Star.Specific(starDatas, allClasses[classID], "Temperature", out string minTemperatureS);
+                    string minTemperatureS = Star.Specific(starDatas, allClasses[classID], "Temperature");
                     Int32.TryParse(minTemperatureS, out minTemperature);
 
                     //Gets the minimal radius possible
-                    Star.Specific(starDatas, allClasses[classID], "Solar radius", out string minRadiusS);
+                    string minRadiusS = Star.Specific(starDatas, allClasses[classID], "Solar radius");
                     Double.TryParse(minRadiusS, out minRadius);
 
 
@@ -153,13 +148,13 @@ namespace Infinity.Generators
                     }
                     else
                     {
-                        Star.Specific(starDatas, allClasses[classID + 1], "Temperature", out string maxTemperatureS);
+                        string maxTemperatureS = Star.Specific(starDatas, allClasses[classID + 1], "Temperature");
                         Int32.TryParse(maxTemperatureS, out maxTemperature);
 
-                        Star.Specific(starDatas, allClasses[classID + 1], "Solar radius", out string maxRadiusS);
+                        string maxRadiusS = Star.Specific(starDatas, allClasses[classID + 1], "Solar radius");
                         Double.TryParse(maxRadiusS, out maxRadius);
 
-                        Star.Specific(starDatas, allClasses[classID + 1], "Solar mass", out string maxMassS);
+                        string maxMassS = Star.Specific(starDatas, allClasses[classID + 1], "Solar mass");
                         Double.TryParse(maxMassS, out maxMass);
                     }
 
@@ -190,9 +185,15 @@ namespace Infinity.Generators
                 blue = 255;
             }
 
-            Console.WriteLine("Class = {0}, Temperature = {1}, Radius = {2}, Luminosity = {3}, Mass = {4}\nColor = R{5}, G{6}, B{7}",
-                allClasses[classID], temperature, radius, luminosity, mass, red, green, blue);
-            
+            properties.Add("Star Class", Convert.ToString(classID));
+            properties.Add("Temperature", Convert.ToString(temperature));
+            properties.Add("Radius", Convert.ToString(radius));
+            properties.Add("Luminosity", Convert.ToString(luminosity));
+            properties.Add("Mass", Convert.ToString(mass));
+            properties.Add("Color Red", Convert.ToString(red));
+            properties.Add("Color Blue", Convert.ToString(blue));
+            properties.Add("Color Green", Convert.ToString(green));
+
             return properties;
         }
 
@@ -205,7 +206,8 @@ namespace Infinity.Generators
             return luminosity;
         }
 
-        private static double[] KToRGB(int Temperature) //took and converted from http://www.tannerhelland.com/4435/convert-temperature-rgb-algorithm-code/
+        private static double[] KToRGB(int Temperature)
+        //took and converted from http://www.tannerhelland.com/4435/convert-temperature-rgb-algorithm-code/
         {
             double Red;
             double Green;

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Infinity.Generators;
 using Infinity.Datas;
-using Infinity.Datas.Querry;
+using Infinity.Datas.Query;
 
 namespace Infinity
 {
@@ -41,8 +41,6 @@ namespace Infinity
             //----------------------------//
 
             Dictionary<string, Dictionary<string, string>> starDatas = Datas.Star.ComputeStarData();
-
-            StarGenerator.Generate(starDatas);
 
             //User's GameData input checking
             while (true)
@@ -235,18 +233,6 @@ namespace Infinity
                 }
             }
 
-            //Loads star settings from config files
-            Dictionary<string, string>[] starConfigsDics = StarTypeGenerator.StarsSettingsLoader(gameDataPath);
-            //To search in the dictionary:
-            //For each i dictionary (for), load what is instead (foreach)
-            /*for(int i = 0; i < starConfigsDics.Length; i++)
-            {
-                foreach (KeyValuePair<string, string> pair in starConfigsDics[i])
-                {
-                    blablablabla pair.Key, blablabla pair.Value
-                }
-            }*/
-
             //------------Dictionaries with all values, ready to be put in the generator !
             //Doubles--
             Dictionary<string, double> galaxySettings = new Dictionary<string, double>();
@@ -255,14 +241,11 @@ namespace Infinity
             galaxySettings.Add("galaxyType", galaxyType);
             galaxySettings.Add("seed", seed);
 
-            //Strings--
-            Dictionary<string, string> stringDataDic = new Dictionary<string, string>();
-            stringDataDic.Add("gameDataPath", gameDataPath);
             //---------------------------------------------------------------------------
 
             //--Removing stars beforehand created
             Console.WriteLine("\nRemoving old stars..");
-            string[] starFileList = Directory.GetFiles(stringDataDic["gameDataPath"] + "\\Infinity\\Stars\\", "*.cfg");
+            string[] starFileList = Directory.GetFiles(gameDataPath + "\\Infinity\\Stars\\", "*.cfg");
 
             foreach (string file in starFileList)
             {
@@ -270,15 +253,8 @@ namespace Infinity
             }
             //---------------
 
-            Dictionary<string, int> starNumberForEachClass = Generators.StarTypeGenerator.GenerateNumberEachStarClass(starConfigsDics, starNumber);
-
-
-            foreach (var pair in starNumberForEachClass)
-            {
-                Console.WriteLine(pair.Key + " = " + pair.Value);
-            }
-
-            Generator.Galaxy(galaxySettings, stringDataDic, starNumberForEachClass, starConfigsDics);
+            Console.WriteLine("Generating the galaxy..");
+            Generator.Galaxy(gameDataPath, galaxySettings, starDatas);
 
             Console.WriteLine("\nGalaxy generated, HF!\nPress any key to leave the program..");
 

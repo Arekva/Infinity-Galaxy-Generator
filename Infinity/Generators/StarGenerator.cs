@@ -70,7 +70,7 @@ namespace Infinity.Generators
         private readonly double solRadius = 695700; //km
         private readonly double solMass = 1.989e+30; //kg
         private readonly double solVolumicMass = 1408; //kg/m^3
-        
+
 
         //====================
 
@@ -105,9 +105,11 @@ namespace Infinity.Generators
             double maxRadius = 0;
             double radius = 0; //in solar radius when initia.
 
-            double luminosity = 0; //in solar luminosity when initia.
+            double maxMass = 0;
+            double minMass = 0;
             double mass = 0; //in solar mass when initia.
-            
+            double luminosity = 0;
+
             //---------------
 
             string[] allClasses =
@@ -122,23 +124,24 @@ namespace Infinity.Generators
             };
 
             //Checks for each type of star
-            
-            for(classID = 0; classID < starDatas.Count; classID++)
+
+            for (classID = 0; classID < starDatas.Count; classID++)
             {
                 Star.Specific(starDatas, allClasses[classID], "Rarity", out string starFreqS);
                 Double.TryParse(starFreqS, out double starFreq);
 
+                frequency = 99.9;
                 //Gets the surface temperature
                 cumuledFrequencies += starFreq;
                 if (frequency < cumuledFrequencies)
                 {
                     //Gets the minimal temperature possible
                     Star.Specific(starDatas, allClasses[classID], "Temperature", out string minTemperatureS);
-                        Int32.TryParse(minTemperatureS, out minTemperature);
+                    Int32.TryParse(minTemperatureS, out minTemperature);
 
                     //Gets the minimal radius possible
                     Star.Specific(starDatas, allClasses[classID], "Solar radius", out string minRadiusS);
-                        Double.TryParse(minRadiusS, out minRadius);
+                    Double.TryParse(minRadiusS, out minRadius);
 
 
                     //Gets the maximal properties
@@ -146,6 +149,7 @@ namespace Infinity.Generators
                     {
                         maxTemperature = 50000;
                         maxRadius = 10;
+                        maxMass = 90;
                     }
                     else
                     {
@@ -154,28 +158,146 @@ namespace Infinity.Generators
 
                         Star.Specific(starDatas, allClasses[classID + 1], "Solar radius", out string maxRadiusS);
                         Double.TryParse(maxRadiusS, out maxRadius);
+
+                        Star.Specific(starDatas, allClasses[classID + 1], "Solar mass", out string maxMassS);
+                        Double.TryParse(maxMassS, out maxMass);
                     }
 
                     break;
-                } 
-            }    
+                }
+            }
 
             temperature = RandomN.Int32(minTemperature, maxTemperature);
             radius = RandomN.Double() * (maxRadius - minRadius) + minRadius;
+            luminosity = starLumCalcutation(radius, temperature); //Approximate one, lol.
+            mass = (RandomN.Double() * (maxMass - minMass) + minMass)/radius; // the "divided by radius" is just a thing to (i hope) make the star more realistic..
 
-            //L = 4*π*R²*σ*T⁴
-            luminosity = 4*Math.PI*Math.Sqrt(radius)* 5.670373e-8 * Math.Pow(temperature/5778, 4);
+            double[] rgb = KToRGB(temperature);
 
-            Console.WriteLine("Star class {0}:\n" +
-                "minimal temperature = {1}, maximal temperature = {2}\nstar temperature = {3}\n" +
-                "minimal radius = {4}, maximal radius = {5}\nstar radius = {6}\n" +
-                "luminosity = {5}",
-                allClasses[classID], minTemperature, maxTemperature, temperature, minRadius, maxRadius, radius, luminosity);
+            double red = rgb[0];
+            if (double.IsNaN(red))
+            {
+                red = 255;
+            }
+            double green = rgb[1];
+            if(double.IsNaN(green))
+            {
+                green = 255;
+            }
+            double blue = rgb[2];
+            if (double.IsNaN(blue))
+            {
+                blue = 255;
+            }
 
-
-
-
+            Console.WriteLine("Class = {0}, Temperature = {1}, Radius = {2}, Luminosity = {3}, Mass = {4}\nColor = R{5}, G{6}, B{7}",
+                allClasses[classID], temperature, radius, luminosity, mass, red, green, blue);
+            
             return properties;
+        }
+
+        private static double starLumCalcutation(double radius, double temperature)
+        {
+            //not working one L = 4*π*R²*σ*T⁴
+            //shoud work = L = R²*T⁴
+
+            double luminosity = Math.Sqrt(radius) * Math.Pow(temperature / 5778, 4);
+            return luminosity;
+        }
+
+        private static double[] KToRGB(int Temperature) //took and converted from http://www.tannerhelland.com/4435/convert-temperature-rgb-algorithm-code/
+        {
+            double Red;
+            double Green;
+            double Blue;
+
+            double[] rgb;
+
+            Temperature = Temperature / 100;
+
+            if (Temperature <= 66)
+            {
+                Red = 255;
+            }
+            else
+            {
+                Red = Temperature - 60;
+                Red = 329.698727466 * Math.Pow(Red, -0.1332047592);
+                if (Red < 0)
+                {
+                    Red = 0;
+                }
+                if (Red > 255)
+                {
+                    Red = 255;
+                }
+            }
+
+            if (Temperature <= 66)
+            {
+                Green = Temperature;
+                Green = 99.4708025861 * Math.Log(Green) - 161.1195681661;
+                Console.WriteLine(Green);
+                if (Green < 0)
+                {
+                    Green = 0;
+                }
+                if (Green > 255)
+                {
+                    Green = 255;
+                }
+            }
+            else
+            {
+                Green = Temperature - 60;
+                Green = 288.1221695283 * Math.Log(Green, -0.0755148492);
+                if (Green < 0)
+                {
+                    Green = 0;
+                }
+                if (Green > 255)
+                {
+                    Green = 255;
+                }
+            }
+
+            if (Temperature >= 66)
+            {
+                Blue = 255;
+            }
+            else
+            {
+                if (Temperature <= 19)
+                {
+                    Blue = 0;
+                }
+                else
+                {
+                    Blue = Temperature - 10;
+                    Blue = 138.5177312231 * Math.Log(Blue) - 305.0447927307;
+                    if (Blue < 0)
+                    {
+                        Blue = 0;
+                    }
+                    if (Blue > 255)
+                    {
+                        Blue = 255;
+                    }
+                }
+            }
+
+            Red = Math.Round(Red);
+            Green = Math.Round(Green);
+            Blue = Math.Round(Blue);
+
+            rgb = new double[]
+            {
+                Red,
+                Green,
+                Blue
+            };
+
+            return rgb;
         }
     }
 }

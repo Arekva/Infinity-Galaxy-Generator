@@ -1,16 +1,15 @@
 {
   "version": 3,
   "targets": {
-    ".NETFramework,Version=v4.7.1": {},
-    ".NETFramework,Version=v4.7.1/win7-x86": {}
+    ".NETFramework,Version=v4.6.1": {},
+    ".NETFramework,Version=v4.6.1/win7-x86": {}
   },
   "libraries": {},
   "projectFileDependencyGroups": {
-    ".NETFramework,Version=v4.7.1": []
+    ".NETFramework,Version=v4.6.1": []
   },
   "packageFolders": {
-    "C:\\Users\\arthu\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackagesFallback\\": {},
+    "C:\\Users\\caleb\\.nuget\\packages\\": {},
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
@@ -19,30 +18,28 @@
       "hideWarningsAndErrors": true
     },
     "restore": {
-      "projectUniqueName": "E:\\Code\\KSP\\Plugins\\Infinity\\Infinity\\Infinity\\Infinity.csproj",
+      "projectUniqueName": "C:\\Users\\caleb\\Documents\\GitHub\\Infinity-Galaxy-Generator\\Infinity\\Infinity.csproj",
       "projectName": "Infinity",
-      "projectPath": "E:\\Code\\KSP\\Plugins\\Infinity\\Infinity\\Infinity\\Infinity.csproj",
-      "packagesPath": "C:\\Users\\arthu\\.nuget\\packages\\",
-      "outputPath": "E:\\Code\\KSP\\Plugins\\Infinity\\Infinity\\Infinity\\obj\\",
+      "projectPath": "C:\\Users\\caleb\\Documents\\GitHub\\Infinity-Galaxy-Generator\\Infinity\\Infinity.csproj",
+      "packagesPath": "C:\\Users\\caleb\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\caleb\\Documents\\GitHub\\Infinity-Galaxy-Generator\\Infinity\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackagesFallback\\",
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\arthu\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.Fallback.config"
+        "C:\\Users\\caleb\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
-        "net471"
+        "net461"
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
-        "net471": {
+        "net461": {
           "projectReferences": {}
         }
       },
@@ -53,7 +50,7 @@
       }
     },
     "frameworks": {
-      "net471": {}
+      "net461": {}
     },
     "runtimes": {
       "win7-x86": {

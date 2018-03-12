@@ -14,8 +14,6 @@ namespace Infinity
         public static void Main(string[] args)
         {
             //------Global Variables------//
-// CHANGER CA AVANT D'ENVOYER     
-/* ----->*/ bool dev = true;
 
             bool ok = false;
 
@@ -44,55 +42,27 @@ namespace Infinity
 
             Dictionary<string, Dictionary<string, string>> starDatas = Datas.Star.ComputeStarData();
 
-            Generators.StarGenerator.Generate(starDatas);
-            /*-----TEST for propertie loading
-            string wantedClass = "M";
-            string wantedPropertie = "Solar mass";
-            string value;
-
-            //Searchs specific for the propertie
-            Datas.Querry.Star.Specific(starDatas, wantedClass, wantedPropertie, out value);
-            Console.WriteLine("{0} {1} = {2}", wantedClass, wantedPropertie, value);
-
-            //Searchs for all properties of a class
-            Datas.Querry.Star.Global(starDatas, wantedClass, out Dictionary<string, string> values);
-            Console.WriteLine("\n===All properties for {0} class star:===", wantedClass);
-            foreach(KeyValuePair<string, string> pair in values)
-            {
-                Console.WriteLine("{0} = {1}", pair.Key, pair.Value);
-            }
-
-            Console.WriteLine(Environment.NewLine);*/
+            StarGenerator.Generate(starDatas);
 
             //User's GameData input checking
             while (true)
             {
                 Console.WriteLine("Welcome in Infinity, the procedural Galaxy generator!\n\nPlease enter here your GameData folder path:");
 
-                if (dev)
-                {
-                    gameDataPath = @"F:\Jeux\Non Steam\Kerbal Space Program\Jeux\Modding Planetes\GameData";
-                    Console.WriteLine("[DEBUG] (dev) GameData Checked !");
+                gameDataPath = Console.ReadLine();
+
+                if (InputCheck.GameData(gameDataPath) == true)
                     break;
-                }
 
                 else
                 {
-                    gameDataPath = Console.ReadLine();
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("GameData folder incorrect, retry with a correct one.");
+                    Console.ResetColor();
 
-                    if (InputCheck.GameData(gameDataPath) == true)
-                        break;
+                    Thread.Sleep(errorDisplayTime);
 
-                    else
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("GameData folder incorrect, retry with a correct one.");
-                        Console.ResetColor();
-
-                        Thread.Sleep(errorDisplayTime);
-
-                        Console.Clear();
-                    }
+                    Console.Clear();
                 }
             }
 
@@ -312,8 +282,6 @@ namespace Infinity
 
             Console.WriteLine("\nGalaxy generated, HF!\nPress any key to leave the program..");
 
-            //if (dev)
-             //   Process.Start(@"F:\Jeux\Non Steam\Kerbal Space Program\Jeux\Modding Planetes\KSP_x64.exe");
             Console.ReadKey();
         }
     }

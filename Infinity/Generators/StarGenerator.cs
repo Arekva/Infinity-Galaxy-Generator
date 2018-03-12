@@ -166,10 +166,10 @@ namespace Infinity.Generators
             //L = 4*π*R²*σ*T⁴
             luminosity = 4*Math.PI*Math.Sqrt(radius)* 5.670373e-8 * Math.Pow(temperature/5778, 4);
 
-            Console.WriteLine("Étoile de classe {0}:\n" +
-                "Température minimale = {1}, Température maximale = {2}\nTempérature de l'étoile = {3}\n" +
-                "Rayon minimal = {4}, Rayon maximal = {5}\nRayon de l'étoile = {6}\n" +
-                "Luminositée = {5}",
+            Console.WriteLine("Star class {0}:\n" +
+                "minimal temperature minimal = {1}, maximal temperature maximale = {2}\nstar temperature = {3}\n" +
+                "minimal radius = {4}, maximal radius = {5}\n star radius = {6}\n" +
+                "luminosity = {5}",
                 allClasses[classID], minTemperature, maxTemperature, temperature, minRadius, maxRadius, radius, luminosity);
 
 

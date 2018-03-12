@@ -1,0 +1,11 @@
+E:\Code\KSP\Plugins\Infinity\Infinity\Infinity\bin\Release\netcoreapp2.0\Infinity.deps.json
+E:\Code\KSP\Plugins\Infinity\Infinity\Infinity\bin\Release\netcoreapp2.0\Infinity.dll
+E:\Code\KSP\Plugins\Infinity\Infinity\Infinity\bin\Release\netcoreapp2.0\Infinity.pdb
+E:\Code\KSP\Plugins\Infinity\Infinity\Infinity\obj\Release\netcoreapp2.0\Infinity.csproj.CoreCompileInputs.cache
+E:\Code\KSP\Plugins\Infinity\Infinity\Infinity\obj\Release\netcoreapp2.0\Infinity.AssemblyInfoInputs.cache
+E:\Code\KSP\Plugins\Infinity\Infinity\Infinity\obj\Release\netcoreapp2.0\Infinity.AssemblyInfo.cs
+E:\Code\KSP\Plugins\Infinity\Infinity\Infinity\obj\Release\netcoreapp2.0\Infinity.dll
+E:\Code\KSP\Plugins\Infinity\Infinity\Infinity\obj\Release\netcoreapp2.0\Infinity.pdb
+E:\Code\KSP\Plugins\Infinity\Infinity\Infinity\obj\Release\netcoreapp2.0\Infinity.csprojResolveAssemblyReference.cache
+E:\Code\KSP\Plugins\Infinity\Infinity\Infinity\bin\Release\netcoreapp2.0\Infinity.runtimeconfig.json
+E:\Code\KSP\Plugins\Infinity\Infinity\Infinity\bin\Release\netcoreapp2.0\Infinity.runtimeconfig.dev.json

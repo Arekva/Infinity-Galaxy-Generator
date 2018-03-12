@@ -1,0 +1,320 @@
+﻿using System;
+using System.IO;
+using System.Threading;
+using System.Collections.Generic;
+using System.Diagnostics;
+using Infinity.Generators;
+using Infinity.Datas;
+using Infinity.Datas.Querry;
+
+namespace Infinity
+{
+    class Program
+    {
+        public static void Main(string[] args)
+        {
+            //------Global Variables------//
+// CHANGER CA AVANT D'ENVOYER     
+/* ----->*/ bool dev = true;
+
+            bool ok = false;
+
+            int errorDisplayTime = 750;
+
+            string gameDataPath;
+
+            int starNumber;
+            double galaxySize;
+            int galaxyType;
+
+            //Seed Generation--
+            Random random = new Random();
+            int seed = random.Next(0, int.MaxValue);
+            //-----------------
+
+            double[] defaultValues =
+            {
+                50,     //0 - Star Number
+                2,      //1 - Galaxy size
+                1,      //2 - Galaxy Type (1 stands for Spiral, 2 for Elliptical
+                seed    //3 - Seed
+            };
+
+            //----------------------------//
+
+            Dictionary<string, Dictionary<string, string>> starDatas = Datas.Star.ComputeStarData();
+
+            Generators.StarGenerator.Generate(starDatas);
+            /*-----TEST for propertie loading
+            string wantedClass = "M";
+            string wantedPropertie = "Solar mass";
+            string value;
+
+            //Searchs specific for the propertie
+            Datas.Querry.Star.Specific(starDatas, wantedClass, wantedPropertie, out value);
+            Console.WriteLine("{0} {1} = {2}", wantedClass, wantedPropertie, value);
+
+            //Searchs for all properties of a class
+            Datas.Querry.Star.Global(starDatas, wantedClass, out Dictionary<string, string> values);
+            Console.WriteLine("\n===All properties for {0} class star:===", wantedClass);
+            foreach(KeyValuePair<string, string> pair in values)
+            {
+                Console.WriteLine("{0} = {1}", pair.Key, pair.Value);
+            }
+
+            Console.WriteLine(Environment.NewLine);*/
+
+            //User's GameData input checking
+            while (true)
+            {
+                Console.WriteLine("Welcome in Infinity, the procedural Galaxy generator!\n\nPlease enter here your GameData folder path:");
+
+                if (dev)
+                {
+                    gameDataPath = @"F:\Jeux\Non Steam\Kerbal Space Program\Jeux\Modding Planetes\GameData";
+                    Console.WriteLine("[DEBUG] (dev) GameData Checked !");
+                    break;
+                }
+
+                else
+                {
+                    gameDataPath = Console.ReadLine();
+
+                    if (InputCheck.GameData(gameDataPath) == true)
+                        break;
+
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("GameData folder incorrect, retry with a correct one.");
+                        Console.ResetColor();
+
+                        Thread.Sleep(errorDisplayTime);
+
+                        Console.Clear();
+                    }
+                }
+            }
+
+            //User's number of star input checking
+            while (true)
+            {
+                Console.WriteLine("\nHow many stars do you want in your galaxy?\n\n" +
+                    "Recommended:\n" +
+                    "-Small configs:  50 ~100\n" +
+                    "-Middle configs: 100~250\n" +
+                    "-High configs:   250~500");
+
+                string input = Console.ReadLine();
+
+                InputCheck.StarNumber(input, out ok, out starNumber);
+
+                if (ok)
+                    break;
+
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Number incorrect, retry with a correct one (>0 or / and integer.)");
+                    Console.ResetColor();
+
+                    Thread.Sleep(errorDisplayTime * 2);
+
+                    Console.Clear();
+                }
+            }
+
+            //User's galaxy size input checking
+            while (true)
+            {
+                ok = false;
+
+                Console.WriteLine("\nWrite here the radius of your Galaxy in Light-Years\n" +
+                    "(minimal value is 0.01 Ly, max is what ksp can support, this means you have to be careful with high values.");
+
+                string input = Console.ReadLine();
+
+                InputCheck.GalaxySize(input, out ok, out galaxySize);
+
+                if (ok)
+                    break;
+
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Number incorrect, retry with a correct one (>0.01)");
+                    Console.ResetColor();
+
+                    Thread.Sleep(errorDisplayTime);
+
+                    Console.Clear();
+                }
+            }
+
+            //User's advanced mode inputs
+            while (true)
+            {
+                ok = false;
+                Console.WriteLine("\nDo you want to access to the advanced settings? (y/n)");
+
+                string input = Console.ReadLine();
+
+                InputCheck.AdvancedSettings(input, out ok, out input);
+
+                if (ok)
+                {
+                    if (input.Equals("n"))
+                    {
+                        galaxyType = (int)defaultValues[2]; //Spiral Galaxy
+
+                    }
+                    else
+                    {
+                        while (true)//Galaxy type choice
+                        {
+                            Console.WriteLine("Choose the type of galaxy:\n\n1 - Spiral (Default)\n2 - Elliptical\n");
+
+                            input = Console.ReadLine();
+
+                            InputCheck.GalaxyChoice(input, out ok, out int inputInt);
+
+                            if (ok && (inputInt == 1 || inputInt == 2))
+                            {
+                                galaxyType = inputInt;
+                                break;
+                            }
+
+                            else
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine("Number incorrect, retry with a correct one (integral number)");
+                                Console.ResetColor();
+
+                                Thread.Sleep(errorDisplayTime * 2);
+
+                                Console.Clear();
+                            }
+                        }
+                        while (true) //Seed choice
+                        {
+                            ok = false;
+
+                            Console.WriteLine("\nEnter a custom seed (Leave empty to use random)");
+
+                            input = Console.ReadLine();
+
+                            if (input.Equals(""))
+                                break;
+
+                            else
+                            {
+                                InputCheck.Seed(input, out ok, out seed);
+
+                                if (ok)
+                                    break;
+
+                                else
+                                {
+                                    Console.ForegroundColor = ConsoleColor.Red;
+                                    Console.WriteLine("Number incorrect, retry with a correct one (integrer)");
+                                    Console.ResetColor();
+
+                                    Thread.Sleep(errorDisplayTime * 3);
+
+                                    Console.Clear();
+                                }
+                            }
+                        }
+
+                    }
+                    break;
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Bad choice, retry with a correct one (write 'n' (no) or 'y' (yes))");
+                    Console.ResetColor();
+
+                    Thread.Sleep(errorDisplayTime * 3);
+
+                    Console.Clear();
+                }
+
+            }
+
+            //User's choice on delete;
+            while (true)
+            {
+                ok = false;
+                Console.WriteLine("\nAre you sure to rebuild a whole new galaxy? The old one will be deleted and saves will be unusable (y/n)");
+
+                string input = Console.ReadLine();
+
+                InputCheck.LastChoice(input, out ok, out input);
+
+                if (input.Equals("n"))
+                {
+                    Console.WriteLine("\nOk well bye, so.");
+                    Thread.Sleep(errorDisplayTime);
+                    Environment.Exit(0);
+                }
+                else
+                {
+                    Console.WriteLine("Hold on some times, the program is removing old files and creating new ones...");
+                    break;
+                }
+            }
+
+            //Loads star settings from config files
+            Dictionary<string, string>[] starConfigsDics = StarTypeGenerator.StarsSettingsLoader(gameDataPath);
+            //To search in the dictionary:
+            //For each i dictionary (for), load what is instead (foreach)
+            /*for(int i = 0; i < starConfigsDics.Length; i++)
+            {
+                foreach (KeyValuePair<string, string> pair in starConfigsDics[i])
+                {
+                    blablablabla pair.Key, blablabla pair.Value
+                }
+            }*/
+
+            //------------Dictionaries with all values, ready to be put in the generator !
+            //Doubles--
+            Dictionary<string, double> galaxySettings = new Dictionary<string, double>();
+            galaxySettings.Add("starNumber", starNumber);
+            galaxySettings.Add("galaxySize", galaxySize);
+            galaxySettings.Add("galaxyType", galaxyType);
+            galaxySettings.Add("seed", seed);
+
+            //Strings--
+            Dictionary<string, string> stringDataDic = new Dictionary<string, string>();
+            stringDataDic.Add("gameDataPath", gameDataPath);
+            //---------------------------------------------------------------------------
+
+            //--Removing stars beforehand created
+            Console.WriteLine("\nRemoving old stars..");
+            string[] starFileList = Directory.GetFiles(stringDataDic["gameDataPath"] + "\\Infinity\\Stars\\", "*.cfg");
+
+            foreach (string file in starFileList)
+            {
+                File.Delete(file);
+            }
+            //---------------
+
+            Dictionary<string, int> starNumberForEachClass = Generators.StarTypeGenerator.GenerateNumberEachStarClass(starConfigsDics, starNumber);
+
+
+            foreach (var pair in starNumberForEachClass)
+            {
+                Console.WriteLine(pair.Key + " = " + pair.Value);
+            }
+
+            Generator.Galaxy(galaxySettings, stringDataDic, starNumberForEachClass, starConfigsDics);
+
+            Console.WriteLine("\nGalaxy generated, HF!\nPress any key to leave the program..");
+
+            //if (dev)
+             //   Process.Start(@"F:\Jeux\Non Steam\Kerbal Space Program\Jeux\Modding Planetes\KSP_x64.exe");
+            Console.ReadKey();
+        }
+    }
+}

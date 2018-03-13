@@ -55,7 +55,7 @@ namespace Infinity.Generators
             string starFile = template
                 .Replace("NEEDS[!Kopernicus]", "FOR[Infinity]")
                 .Replace("#VAR-ID", Convert.ToString(starCount+1))                               //ID
-                .Replace("#VAR-STARCLASS", Datas.Query.Star.Specific(starProperties, "Global Properties", "Star class"))
+                .Replace("#VAR-STARCLASS", Datas.Query.Star.Specific(starProperties, "Global Properties", "Star Class"))
                 .Replace("#VAR-INC", Datas.Query.Star.Specific(starProperties, "Orbital Properties", "Inclination"))           //Inclination
                 .Replace("#VAR-ECC", Datas.Query.Star.Specific(starProperties, "Orbital Properties", "Eccentricity"))            //Eccentricity
                 .Replace("#VAR-SMA", Datas.Query.Star.Specific(starProperties, "Orbital Properties", "Semi Major Axis"))           //SemiMajorAxis

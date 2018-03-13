@@ -1,0 +1,84 @@
+@Kopernicus:FOR[Infinity]
+{
+	Body
+	{
+		name = CloudProbe 1
+		cacheFile = Infinity\Others\Cache\CP1.bin
+		
+		Template
+		{
+			name = Tylo
+		}
+		Properties
+		{
+			isHomeWorld = false
+			selectable = true
+			hiddenRnD = false
+			geeAsl = 0.1
+			radius = 100000
+		}
+		Orbit
+		{
+			referenceBody = Sun
+			semiMajorAxis = 1E+8
+			color = 1,0,1,0
+		}
+		ScaledVersion
+		{
+			type = Vacuum
+			fadeStart = 100000
+			fadeEnd = 120000
+			Material
+			{
+				texture = x/x.png
+				normals = x/x.png
+			}
+		}
+		
+		Particles
+		{
+			Particle
+			{
+				name = TGalacticalCloudParticuleTR
+
+				target = None
+
+				speedScale = 0
+
+				minEmission = 1e-5
+				maxEmission = 1e-5
+
+				lifespanMin = 1
+				lifespanMax = 1
+
+				minEnergy = 0
+				maxEnergy = 0
+
+				sizeMin = 5e11
+				sizeMax = 5e11
+
+				sizeGrow = 0
+
+				texture = Infinity\Others\GalacticCloud.png
+
+				randVelocity = 0, 0, 0
+				scale = 1,1,1
+
+				collide = false
+
+				force = 0,0,0
+
+				rate = 0
+
+				Colors
+				{
+					color1 = 1,1,1,0.01
+					color2 = 1,1,1,0.01
+					color3 = 1,1,1,0.01
+					color4 = 1,1,1,0.01
+					color5 = 1,1,1,0.01
+				}
+			}
+		}
+	}
+}

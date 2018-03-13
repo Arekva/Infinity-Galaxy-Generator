@@ -54,7 +54,7 @@ namespace Infinity.Generators
 
             string starFile = template
                 .Replace("NEEDS[!Kopernicus]", "FOR[Infinity]")
-                .Replace("#VAR-ID", Convert.ToString(starCount))                               //ID
+                .Replace("#VAR-ID", Convert.ToString(starCount+1))                               //ID
                 .Replace("#VAR-STARCLASS", Datas.Query.Star.Specific(starProperties, "Global Properties", "Star class"))
                 .Replace("#VAR-INC", Datas.Query.Star.Specific(starProperties, "Orbital Properties", "Inclination"))           //Inclination
                 .Replace("#VAR-ECC", Datas.Query.Star.Specific(starProperties, "Orbital Properties", "Eccentricity"))            //Eccentricity
@@ -85,7 +85,7 @@ namespace Infinity.Generators
             {
                 Dictionary<string, Dictionary<string, string>> Star = Generator.Star(starDatabase, doubleDataDic);
 
-                File.WriteAllText(gameDataPath + "\\Infinity\\Stars\\Star " + Convert.ToString(i++) + ".cfg", Generator.StarFile(Star, gameDataPath, i));
+                File.WriteAllText(gameDataPath + "\\Infinity\\Stars\\Star " + Convert.ToString(i+1) + ".cfg", Generator.StarFile(Star, gameDataPath, i));
             }
 
             /*Old things

@@ -239,7 +239,6 @@ namespace Infinity.Generators
             {
                 Green = Temperature;
                 Green = 99.4708025861 * Math.Log(Green) - 161.1195681661;
-                Console.WriteLine(Green);
                 if (Green < 0)
                 {
                     Green = 0;

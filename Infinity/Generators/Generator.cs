@@ -80,6 +80,38 @@ namespace Infinity.Generators
         }
 
         /// <summary>
+        /// Creates a new orbit for Kerbol
+        /// </summary>
+        public static string NewKerbolPosition(string gameDataPath, Dictionary<string, double> galaxySettings)
+        {
+            string template = File.ReadAllText(gameDataPath + "\\Infinity\\Templates\\BaseSystemOrbit.cfg");
+
+            //Generates the orbit
+            Dictionary<string, double> orbit = new Dictionary<string, double>();
+
+            orbit = Orbit.RandomOrbit(galaxySettings);
+
+            //Converts with dots instead of commas + in string
+            Dictionary<string, string> orbitProperties = new Dictionary<string, string>();
+            orbitProperties.Add("Inclination", Convert.ToString(orbit["inclination"]).Replace(",", "."));
+            orbitProperties.Add("Eccentricity", Convert.ToString(orbit["eccentricity"]).Replace(",", "."));
+            orbitProperties.Add("Semi Major Axis", Convert.ToString(orbit["semiMajorAxis"]).Replace(",", "."));
+            orbitProperties.Add("Mean Anomaly At Epoch", Convert.ToString(orbit["meanAnomalyAtEpoch"]).Replace(",", "."));
+            orbitProperties.Add("Longitude Of Ascending Node", Convert.ToString(orbit["longitudeOfAscendingNode"]).Replace(",", "."));
+            orbitProperties.Add("Epoch", Convert.ToString(orbit["epoch"]).Replace(",", "."));
+
+            string starFile = template
+                .Replace("NEEDS[!Kopernicus]", "FOR[Infinity]")
+                .Replace("#VAR-INC", orbitProperties["Inclination"])
+                .Replace("#VAR-ECC", orbitProperties["Eccentricity"])
+                .Replace("#VAR-SMA", orbitProperties["Semi Major Axis"]) 
+                .Replace("#VAR-MAE", orbitProperties["Mean Anomaly At Epoch"])
+                .Replace("#VAR-LAN", orbitProperties["Longitude Of Ascending Node"])
+                .Replace("#VAR-EPO", orbitProperties["Epoch"]);
+
+            return starFile;
+        }
+        /// <summary>
         /// Creates the galaxy with generated stars, planet, and other celestial bodies
         /// </summary>
         public static void Galaxy(
@@ -96,6 +128,10 @@ namespace Infinity.Generators
 
                 File.WriteAllText(gameDataPath + "\\Infinity\\Stars\\Star " + Convert.ToString(i+1) + ".cfg", Generator.StarFile(Star, gameDataPath, i));
             }
+
+            //Generates new Sun position
+
+            File.WriteAllText(gameDataPath + "\\Infinity\\Stars\\Sun.cfg", NewKerbolPosition(gameDataPath, doubleDataDic));
         }
     }
 }

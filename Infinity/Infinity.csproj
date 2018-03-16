@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Generators\Generator.cs" />
+    <None Include="Old\Generators\Generator.cs" />
   </ItemGroup>
 
   <ItemGroup>

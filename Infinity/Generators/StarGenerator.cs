@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Infinity.Datas.Query;
+using System.IO;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace Infinity.Generators
 {
@@ -74,7 +77,7 @@ namespace Infinity.Generators
 
         //====================
 
-        public static Dictionary<string, string> Generate(Dictionary<string, Dictionary<string, string>> starDatas)
+        public static Dictionary<string, string> Generate(Dictionary<string, Dictionary<string, string>> starDatas, string gameDataPath)
         {
             //-- Star Properties --//
             //double habitableZoneMin;    //AU
@@ -185,7 +188,7 @@ namespace Infinity.Generators
                 blue = 255;
             }
 
-            properties.Add("Star Class", Convert.ToString(classID));
+            properties.Add("Star Class", Convert.ToString(allClasses[classID]));
             properties.Add("Temperature", Convert.ToString(temperature));
             properties.Add("Radius", Convert.ToString(radius));
             properties.Add("Luminosity", Convert.ToString(luminosity));
@@ -205,7 +208,7 @@ namespace Infinity.Generators
             double luminosity = Math.Sqrt(radius) * Math.Pow(temperature / 5778, 4);
             return luminosity;
         }
-
+        
         private static double[] KToRGB(int Temperature)
         //took and converted from http://www.tannerhelland.com/4435/convert-temperature-rgb-algorithm-code/
         {

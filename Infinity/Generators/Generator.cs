@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 using System.IO;
 using Infinity.Datas;
 using System.Reflection;
-
+using System.Drawing;
+using System.Drawing.Imaging;
 namespace Infinity.Generators
 {
     class Generator
@@ -15,7 +16,7 @@ namespace Infinity.Generators
         /// Generates a procedural star
         /// </summary>
         public static Dictionary<string, Dictionary<string, string>> Star(
-            Dictionary<string, Dictionary<string, string>> starDatabase, Dictionary<string, double> galaxySettings)//galaxySetings is used for the orbit generator
+            Dictionary<string, Dictionary<string, string>> starDatabase, Dictionary<string, double> galaxySettings, string gameDataPath)//galaxySetings is used for the orbit generator
         {
             //Generates the orbit
             Dictionary<string, double> orbit = new Dictionary<string, double>();
@@ -31,7 +32,7 @@ namespace Infinity.Generators
             orbitProperties.Add("Epoch", Convert.ToString(orbit["epoch"]).Replace(",", "."));
 
             //Generates star class
-            Dictionary<string, string> globalPropertiesComma = StarGenerator.Generate(starDatabase);
+            Dictionary<string, string> globalPropertiesComma = StarGenerator.Generate(starDatabase, gameDataPath);
 
             Dictionary<string, string> globalProperties = new Dictionary<string, string>();
             globalProperties.Add("Star Class", globalPropertiesComma["Star Class"].Replace(",", "."));
@@ -42,6 +43,20 @@ namespace Infinity.Generators
             globalProperties.Add("Color Red", globalPropertiesComma["Color Red"].Replace(",", "."));
             globalProperties.Add("Color Green", globalPropertiesComma["Color Green"].Replace(",", "."));
             globalProperties.Add("Color Blue", globalPropertiesComma["Color Blue"].Replace(",", "."));
+
+            //Generates intensity curves
+            Double.TryParse(globalPropertiesComma["Luminosity"], out double luminosity);
+            double key1 = 1.35E+10;
+            key1 *= luminosity;
+            double key2 = 1E+11;
+            key2 *= luminosity;
+            double key3 = 2.82E+11;
+            key3 *= luminosity;
+
+
+            globalProperties.Add("BC KEY 1", Convert.ToString(key1).Replace(",", "."));
+            globalProperties.Add("BC KEY 2", Convert.ToString(key2).Replace(",", "."));
+            globalProperties.Add("BC KEY 3", Convert.ToString(key3).Replace(",", "."));
 
             //Makes teh finol packoge
             Dictionary<string, Dictionary<string, string>> properties = new Dictionary<string, Dictionary<string, string>>();
@@ -60,7 +75,7 @@ namespace Infinity.Generators
 
             string starFile = template
                 .Replace("NEEDS[!Kopernicus]", "FOR[Infinity]")
-                .Replace("#VAR-ID", Convert.ToString(starCount+1))                               //ID
+                .Replace("#VAR-ID", Convert.ToString(starCount + 1))                               //ID
                 .Replace("#VAR-STARCLASS", Datas.Query.Star.Specific(starProperties, "Global Properties", "Star Class"))
                 .Replace("#VAR-INC", Datas.Query.Star.Specific(starProperties, "Orbital Properties", "Inclination"))           //Inclination
                 .Replace("#VAR-ECC", Datas.Query.Star.Specific(starProperties, "Orbital Properties", "Eccentricity"))            //Eccentricity
@@ -73,7 +88,12 @@ namespace Infinity.Generators
                 .Replace("#VAR-COLOR-BLUE", Datas.Query.Star.Specific(starProperties, "Global Properties", "Color Blue"))
                 .Replace("#VAR-RADIUS", Datas.Query.Star.Specific(starProperties, "Global Properties", "Radius"))
                 .Replace("#VAR-MASS", Datas.Query.Star.Specific(starProperties, "Global Properties", "Mass"))
-                .Replace("#VAR-LUMINOSITY", Datas.Query.Star.Specific(starProperties, "Global Properties", "Luminosity"));
+                .Replace("#VAR-LUMINOSITY", Datas.Query.Star.Specific(starProperties, "Global Properties", "Luminosity"))
+                .Replace("#VAR-TEMPERATURE", Datas.Query.Star.Specific(starProperties, "Global Properties", "Temperature"))
+                .Replace("#VAR-CORONA", @"Infinity\Templates\Coronas\" + Datas.Query.Star.Specific(starProperties, "Global Properties", "Star Class") + ".png")
+                .Replace("#VAR-INTENSITY-KEY1", Datas.Query.Star.Specific(starProperties, "Global Properties", "BC KEY 1"))
+                .Replace("#VAR-INTENSITY-KEY2", Datas.Query.Star.Specific(starProperties, "Global Properties", "BC KEY 2"))
+                .Replace("#VAR-INTENSITY-KEY3", Datas.Query.Star.Specific(starProperties, "Global Properties", "BC KEY 3"));
 
             return starFile;
             //File.WriteAllText(stringDataDic["gameDataPath"] + "\\Infinity\\Stars\\Star " + Convert.ToString(starCount) + ".cfg", templateFile);
@@ -111,6 +131,7 @@ namespace Infinity.Generators
 
             return starFile;
         }
+
         /// <summary>
         /// Creates the galaxy with generated stars, planet, and other celestial bodies
         /// </summary>
@@ -124,14 +145,14 @@ namespace Infinity.Generators
 
             for (int i = 0; i < doubleDataDic["starNumber"]; i++)
             {
-                Dictionary<string, Dictionary<string, string>> Star = Generator.Star(starDatabase, doubleDataDic);
+                Dictionary<string, Dictionary<string, string>> Star = Generator.Star(starDatabase, doubleDataDic, gameDataPath);
 
-                File.WriteAllText(gameDataPath + "\\Infinity\\Stars\\Star " + Convert.ToString(i+1) + ".cfg", Generator.StarFile(Star, gameDataPath, i));
+                File.WriteAllText(gameDataPath + @"\Infinity\Stars\Star " + Convert.ToString(i+1) + ".cfg", Generator.StarFile(Star, gameDataPath, i));
             }
 
             //Generates new Sun position
 
-            File.WriteAllText(gameDataPath + "\\Infinity\\Stars\\Sun.cfg", NewKerbolPosition(gameDataPath, doubleDataDic));
+            File.WriteAllText(gameDataPath + @"\Infinity\Stars\Sun.cfg", NewKerbolPosition(gameDataPath, doubleDataDic));
         }
     }
 }

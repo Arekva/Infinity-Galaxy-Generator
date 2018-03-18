@@ -253,7 +253,7 @@ namespace Infinity
             }
             //---------------
 
-            Console.WriteLine("Generating the galaxy..");
+            Console.WriteLine("\nGenerating the galaxy..");
             Generator.Galaxy(gameDataPath, galaxySettings, starDatas);
 
             Console.WriteLine("\nGalaxy generated, HF!\nPress any key to leave the program..");

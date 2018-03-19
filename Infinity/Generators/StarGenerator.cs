@@ -122,6 +122,8 @@ namespace Infinity.Generators
                 "O"
             };
 
+            string starLumClass = "";
+
             //Checks for each type of star
 
             for (classID = 0; classID < starDatas.Count; classID++)
@@ -140,7 +142,6 @@ namespace Infinity.Generators
                     //Gets the minimal radius possible
                     string minRadiusS = Star.Specific(starDatas, allClasses[classID], "Solar radius");
                     Double.TryParse(minRadiusS, out minRadius);
-
 
                     //Gets the maximal properties
                     if (classID == starDatas.Count - 1) //If it is a O class
@@ -161,6 +162,8 @@ namespace Infinity.Generators
                         Double.TryParse(maxMassS, out maxMass);
                     }
 
+                    
+
                     break;
                 }
             }
@@ -169,6 +172,43 @@ namespace Infinity.Generators
             radius = RandomN.Double() * (maxRadius - minRadius) + minRadius;
             luminosity = starLumCalcutation(radius, temperature); //Approximate one, lol.
             mass = (RandomN.Double() * (maxMass - minMass) + minMass)/radius; // the "divided by radius" is just a thing to (i hope) make the star more realistic..
+
+            //Gets the luminosity class in their type
+            //%centage of the temperature in the range
+            double percentageTemp = ((double)temperature - (double)minTemperature)/ (double)(maxTemperature - (double)minTemperature)*10;
+            percentageTemp = Math.Round(percentageTemp);
+
+            if (percentageTemp == 0)
+                starLumClass = "9";
+
+            if (percentageTemp == 1)
+                starLumClass = "8";
+
+            if (percentageTemp == 2)
+                starLumClass = "7";
+
+            if (percentageTemp == 3)
+                starLumClass = "6";
+
+            if (percentageTemp == 4)
+                starLumClass = "5";
+
+            if (percentageTemp == 5)
+                starLumClass = "4";
+
+            if (percentageTemp == 6)
+                starLumClass = "3";
+
+            if (percentageTemp == 7)
+                starLumClass = "2";
+
+            if (percentageTemp == 8)
+                starLumClass = "1";
+
+            if ((percentageTemp == 9) || (percentageTemp == 10))
+                starLumClass = "0";
+
+
 
             double[] rgb = KToRGB(temperature);
 
@@ -188,6 +228,18 @@ namespace Infinity.Generators
                 blue = 255;
             }
 
+            //TEMP------
+            /*string tempCoronaPathLumClass = "";
+            if ((starLumClass.Equals("9")) || (starLumClass.Equals("8")) || (starLumClass.Equals("7")))
+                tempCoronaPathLumClass = "9";
+
+            if ((starLumClass.Equals("6")) || (starLumClass.Equals("5")) || (starLumClass.Equals("4")) || (starLumClass.Equals("3")))
+                tempCoronaPathLumClass = "5";
+
+            if ((starLumClass.Equals("2")) || (starLumClass.Equals("1")) || (starLumClass.Equals("0")))
+                tempCoronaPathLumClass = "9";*/
+            //----------
+
             properties.Add("Star Class", Convert.ToString(allClasses[classID]));
             properties.Add("Temperature", Convert.ToString(temperature));
             properties.Add("Radius", Convert.ToString(radius));
@@ -196,10 +248,11 @@ namespace Infinity.Generators
             properties.Add("Color Red", Convert.ToString(red));
             properties.Add("Color Blue", Convert.ToString(blue));
             properties.Add("Color Green", Convert.ToString(green));
+            properties.Add("Star Luminosity Class", starLumClass);
+            properties.Add("Corona Path", @"Infinity\Templates\Coronas\" + allClasses[classID] + starLumClass + " V.png");
 
             return properties;
         }
-
         private static double starLumCalcutation(double radius, double temperature)
         {
             //not working one L = 4*π*R²*σ*T⁴
@@ -303,5 +356,7 @@ namespace Infinity.Generators
 
             return rgb;
         }
+
+        //private static double tempInTempRange(int te)
     }
 }

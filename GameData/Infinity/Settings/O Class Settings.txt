@@ -1,5 +1,0 @@
-spectralclass = O
-luminosityclass = V
-orbitcolor = #479aff
-frequency = 10
-templatepath = \\Infinity\\Templates\\O Class Star.cfg

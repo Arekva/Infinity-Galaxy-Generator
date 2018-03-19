@@ -43,6 +43,8 @@ namespace Infinity.Generators
             globalProperties.Add("Color Red", globalPropertiesComma["Color Red"].Replace(",", "."));
             globalProperties.Add("Color Green", globalPropertiesComma["Color Green"].Replace(",", "."));
             globalProperties.Add("Color Blue", globalPropertiesComma["Color Blue"].Replace(",", "."));
+            globalProperties.Add("Star Luminosity Class", globalPropertiesComma["Star Luminosity Class"].Replace(",", "."));
+            globalProperties.Add("Corona Path", globalPropertiesComma["Corona Path"].Replace(",", "."));
 
             //Generates intensity curves
             Double.TryParse(globalPropertiesComma["Luminosity"], out double luminosity);
@@ -90,7 +92,8 @@ namespace Infinity.Generators
                 .Replace("#VAR-MASS", Datas.Query.Star.Specific(starProperties, "Global Properties", "Mass"))
                 .Replace("#VAR-LUMINOSITY", Datas.Query.Star.Specific(starProperties, "Global Properties", "Luminosity"))
                 .Replace("#VAR-TEMPERATURE", Datas.Query.Star.Specific(starProperties, "Global Properties", "Temperature"))
-                .Replace("#VAR-CORONA", @"Infinity\Templates\Coronas\" + Datas.Query.Star.Specific(starProperties, "Global Properties", "Star Class") + ".png")
+                .Replace("#VAR-CORONA", Datas.Query.Star.Specific(starProperties, "Global Properties", "Corona Path"))
+                .Replace("#VAR-STARLUMCLASS", Datas.Query.Star.Specific(starProperties, "Global Properties", "Star Luminosity Class"))
                 .Replace("#VAR-INTENSITY-KEY1", Datas.Query.Star.Specific(starProperties, "Global Properties", "BC KEY 1"))
                 .Replace("#VAR-INTENSITY-KEY2", Datas.Query.Star.Specific(starProperties, "Global Properties", "BC KEY 2"))
                 .Replace("#VAR-INTENSITY-KEY3", Datas.Query.Star.Specific(starProperties, "Global Properties", "BC KEY 3"));

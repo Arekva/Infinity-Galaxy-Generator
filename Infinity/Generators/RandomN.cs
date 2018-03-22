@@ -13,7 +13,7 @@ namespace Infinity.Generators
         /// <returns></returns>
         public static double Double()
         {
-            Thread.Sleep(3);
+            //Thread.Sleep(3);
             Random random = new Random();
             return random.NextDouble();
         }
@@ -21,12 +21,10 @@ namespace Infinity.Generators
         /// <summary>
         /// Generates a random Int32 between a minimal and maximal value
         /// </summary>
-        /// <param name="minValue"></param>
-        /// <param name="maxValue"></param>
         /// <returns></returns>
         public static int Int32(int minValue, int maxValue)
         {
-            Thread.Sleep(3);
+            //Thread.Sleep(3);
             Random random = new Random();
             return random.Next(minValue, maxValue + 1);
         }

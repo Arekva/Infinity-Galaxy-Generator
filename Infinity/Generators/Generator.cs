@@ -8,6 +8,8 @@ using Infinity.Datas;
 using System.Reflection;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Threading;
+using System.Diagnostics;
 namespace Infinity.Generators
 {
     class Generator
@@ -16,11 +18,11 @@ namespace Infinity.Generators
         /// Generates a procedural star
         /// </summary>
         public static Dictionary<string, Dictionary<string, string>> Star(
-            Dictionary<string, Dictionary<string, string>> starDatabase, Dictionary<string, double> galaxySettings, string gameDataPath)//galaxySetings is used for the orbit generator
+            Dictionary<string, Dictionary<string, string>> starDatabase, Dictionary<string, double> galaxySettings, string gameDataPath, Random random)//galaxySetings is used for the orbit generator
         {
             //Generates the orbit
             Dictionary<string, double> orbit = new Dictionary<string, double>();
-            orbit = Orbit.RandomOrbit(galaxySettings);
+            orbit = Orbit.RandomOrbit(galaxySettings, random);
 
             //Converts with dots instead of commas + in string
             Dictionary<string, string> orbitProperties = new Dictionary<string, string>();
@@ -48,17 +50,71 @@ namespace Infinity.Generators
 
             //Generates intensity curves
             Double.TryParse(globalPropertiesComma["Luminosity"], out double luminosity);
-            double key1 = 1.35E+10;
-            key1 *= luminosity;
-            double key2 = 1E+11;
-            key2 *= luminosity;
-            double key3 = 2.82E+11;
-            key3 *= luminosity;
+            Double.TryParse(globalPropertiesComma["Radius"], out double radius);
+
+            //Scaled Space
+            double key1SCx = 2E+07;
+            key1SCx *= luminosity;
+            double key2SCx = 1E+9;
+            key2SCx *= luminosity;
+            double key3SCx = 2.82E+9;
+            key3SCx *= luminosity;
+
+            luminosity *= 40;
+            if (radius > 1)
+                luminosity *= radius;
+            else
+                luminosity /= radius;
+
+            
+
+            //Normal
+            double key1x = 1.35E+10;
+            key1x *= luminosity;
+            double key2x = 1E+11;
+            key2x *= luminosity;
+            double key3x = 2.82E+11;
+            key3x *= luminosity;
+
+            
+
+            //Power number
+            double key0y = 1; //Kerbol is 0.9 but hey.
+            //key0y *= luminosity;
+            double key1y = 0.7;
+            //key1y *= luminosity;
+            double key2y = 0.2;
+            //key2y *= luminosity;
 
 
-            globalProperties.Add("BC KEY 1", Convert.ToString(key1).Replace(",", "."));
-            globalProperties.Add("BC KEY 2", Convert.ToString(key2).Replace(",", "."));
-            globalProperties.Add("BC KEY 3", Convert.ToString(key3).Replace(",", "."));
+            globalProperties.Add("IN KEY 1x", Convert.ToString(key1x).Replace(",", "."));
+            globalProperties.Add("IN KEY 2x", Convert.ToString(key2x).Replace(",", "."));
+            globalProperties.Add("IN KEY 3x", Convert.ToString(key3x).Replace(",", "."));
+            globalProperties.Add("IN KEY SC 1x", Convert.ToString(key1SCx).Replace(",", "."));
+            globalProperties.Add("IN KEY SC 2x", Convert.ToString(key2SCx).Replace(",", "."));
+            globalProperties.Add("IN KEY SC 3x", Convert.ToString(key3SCx).Replace(",", "."));
+            globalProperties.Add("IN KEY 0y", Convert.ToString(key0y).Replace(",", "."));
+            globalProperties.Add("IN KEY 1y", Convert.ToString(key1y).Replace(",", "."));
+            globalProperties.Add("IN KEY 2y", Convert.ToString(key2y).Replace(",", "."));
+
+
+            //Generates sunflare size curve
+            Double.TryParse(globalPropertiesComma["Radius"], out double radiusInKerbolRadius);
+
+            radiusInKerbolRadius *= 6.957e+8; //In meters
+            radiusInKerbolRadius /= 3; //KSP Size
+            radiusInKerbolRadius /= 261600000; //Obtains percentage of kerbol's radius
+
+            key1x = 0.5;
+            key1x /= radiusInKerbolRadius;
+            key2x = 0.9;
+            key2x /= radiusInKerbolRadius;
+            key3x = 10;
+            key3x /= radiusInKerbolRadius;
+
+            globalProperties.Add("BC KEY 1x", Convert.ToString(key1x).Replace(",", "."));
+            globalProperties.Add("BC KEY 2x", Convert.ToString(key2x).Replace(",", "."));
+            globalProperties.Add("BC KEY 3x", Convert.ToString(key3x).Replace(",", "."));
 
             //Makes teh finol packoge
             Dictionary<string, Dictionary<string, string>> properties = new Dictionary<string, Dictionary<string, string>>();
@@ -94,9 +150,19 @@ namespace Infinity.Generators
                 .Replace("#VAR-TEMPERATURE", Datas.Query.Star.Specific(starProperties, "Global Properties", "Temperature"))
                 .Replace("#VAR-CORONA", Datas.Query.Star.Specific(starProperties, "Global Properties", "Corona Path"))
                 .Replace("#VAR-STARLUMCLASS", Datas.Query.Star.Specific(starProperties, "Global Properties", "Star Luminosity Class"))
-                .Replace("#VAR-INTENSITY-KEY1", Datas.Query.Star.Specific(starProperties, "Global Properties", "BC KEY 1"))
-                .Replace("#VAR-INTENSITY-KEY2", Datas.Query.Star.Specific(starProperties, "Global Properties", "BC KEY 2"))
-                .Replace("#VAR-INTENSITY-KEY3", Datas.Query.Star.Specific(starProperties, "Global Properties", "BC KEY 3"));
+                .Replace("#VAR-INTENSITY-KEY1X", Datas.Query.Star.Specific(starProperties, "Global Properties", "IN KEY 1x"))
+                .Replace("#VAR-INTENSITY-KEY2X", Datas.Query.Star.Specific(starProperties, "Global Properties", "IN KEY 2x"))
+                .Replace("#VAR-INTENSITY-KEY3X", Datas.Query.Star.Specific(starProperties, "Global Properties", "IN KEY 3x"))
+                .Replace("#VAR-INTENSITYSC-KEY1X", Datas.Query.Star.Specific(starProperties, "Global Properties", "IN KEY SC 1x"))
+                .Replace("#VAR-INTENSITYSC-KEY2X", Datas.Query.Star.Specific(starProperties, "Global Properties", "IN KEY SC 2x"))
+                .Replace("#VAR-INTENSITYSC-KEY3X", Datas.Query.Star.Specific(starProperties, "Global Properties", "IN KEY SC 3x"))
+                .Replace("#VAR-INTENSITY-KEY0Y", Datas.Query.Star.Specific(starProperties, "Global Properties", "IN KEY 0y"))
+                .Replace("#VAR-INTENSITY-KEY1Y", Datas.Query.Star.Specific(starProperties, "Global Properties", "IN KEY 1y"))
+                .Replace("#VAR-INTENSITY-KEY2Y", Datas.Query.Star.Specific(starProperties, "Global Properties", "IN KEY 2y"))
+                .Replace("#VAR-BRIGHTNESSCURVE-KEY1X", Datas.Query.Star.Specific(starProperties, "Global Properties", "BC KEY 1x"))
+                .Replace("#VAR-BRIGHTNESSCURVE-KEY2X", Datas.Query.Star.Specific(starProperties, "Global Properties", "BC KEY 2x"))
+                .Replace("#VAR-BRIGHTNESSCURVE-KEY3X", Datas.Query.Star.Specific(starProperties, "Global Properties", "BC KEY 3x"));
+                
 
             return starFile;
             //File.WriteAllText(stringDataDic["gameDataPath"] + "\\Infinity\\Stars\\Star " + Convert.ToString(starCount) + ".cfg", templateFile);
@@ -105,14 +171,14 @@ namespace Infinity.Generators
         /// <summary>
         /// Creates a new orbit for Kerbol
         /// </summary>
-        public static string NewKerbolPosition(string gameDataPath, Dictionary<string, double> galaxySettings)
+        public static string NewKerbolPosition(string gameDataPath, Dictionary<string, double> galaxySettings, Random random)
         {
             string template = File.ReadAllText(gameDataPath + "\\Infinity\\Templates\\BaseSystemOrbit.cfg");
 
             //Generates the orbit
             Dictionary<string, double> orbit = new Dictionary<string, double>();
 
-            orbit = Orbit.RandomOrbit(galaxySettings);
+            orbit = Orbit.RandomOrbit(galaxySettings, random);
 
             //Converts with dots instead of commas + in string
             Dictionary<string, string> orbitProperties = new Dictionary<string, string>();
@@ -139,23 +205,29 @@ namespace Infinity.Generators
         /// Creates the galaxy with generated stars, planet, and other celestial bodies
         /// </summary>
         public static void Galaxy(
-            string gameDataPath, Dictionary<string, double> doubleDataDic, Dictionary<string, Dictionary<string, string>> starDatabase)
+            string gameDataPath, Dictionary<string, double> doubleDataDic, Dictionary<string, Dictionary<string, string>> starDatabase, Random random)
         {
             
-            string starFolder = gameDataPath + "\\Infinity\\Stars";
+            string starFolder = gameDataPath + "\\Infinity\\StarSystems\\Stars";
 
             //Generates stars
-
+            Stopwatch stopwatch = new Stopwatch();
+            Console.Clear();
+            Console.WriteLine("Generating Galaxy... Star     /{0}", doubleDataDic["starNumber"]);
+            stopwatch.Start();
             for (int i = 0; i < doubleDataDic["starNumber"]; i++)
             {
-                Dictionary<string, Dictionary<string, string>> Star = Generator.Star(starDatabase, doubleDataDic, gameDataPath);
+                Console.SetCursorPosition(26, 0);
+                Console.Write(i + 1);
+                Dictionary<string, Dictionary<string, string>> Star = Generator.Star(starDatabase, doubleDataDic, gameDataPath, random);
 
-                File.WriteAllText(gameDataPath + @"\Infinity\Stars\Star " + Convert.ToString(i+1) + ".cfg", Generator.StarFile(Star, gameDataPath, i));
+                File.WriteAllText(gameDataPath + @"\Infinity\StarSystems\Stars\Star " + Convert.ToString(i+1) + ".cfg", Generator.StarFile(Star, gameDataPath, i));
             }
-
+            
             //Generates new Sun position
-
-            File.WriteAllText(gameDataPath + @"\Infinity\Stars\Sun.cfg", NewKerbolPosition(gameDataPath, doubleDataDic));
+            File.WriteAllText(gameDataPath + @"\Infinity\StarSystems\Stars\Sun.cfg", NewKerbolPosition(gameDataPath, doubleDataDic, random));
+            stopwatch.Stop();
+            Console.WriteLine("\nDone! Time elapsed: {0:hh\\:mm\\:ss\\:ms}", stopwatch.Elapsed);
         }
     }
 }

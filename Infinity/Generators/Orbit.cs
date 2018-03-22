@@ -9,7 +9,7 @@ namespace Infinity.Generators
 {
     class Orbit
     {
-        public static Dictionary<string, double> RandomOrbit(Dictionary<string, double> doubleDataDic)
+        public static Dictionary<string, double> RandomOrbit(Dictionary<string, double> doubleDataDic, Random random)
         {
             //-----------Orbital Elements generated-----
             double inclination = 0;
@@ -34,17 +34,17 @@ namespace Infinity.Generators
             //------------------------------------------
 
             //----Generating elements----
-            eccentricity = RandomN.Double() * maxEccentricity;
-            semiMajorAxis = RandomN.Double() * doubleDataDic["galaxySize"];
+            eccentricity = random.NextDouble() * maxEccentricity;
+            semiMajorAxis = random.NextDouble() * doubleDataDic["galaxySize"];
 
             if (doubleDataDic["galaxySize"] == 1) 
-                inclination = (RandomN.Double() * maxInclination ) / semiMajorAxis * 0.7; //The "sMA * x" is to have a bumble at the center / flat on the borders of the spiral galaxy; lower is the value, flater will be the galaxy
+                inclination = (random.NextDouble() * maxInclination ) / semiMajorAxis * 0.7; //The "sMA * x" is to have a bumble at the center / flat on the borders of the spiral galaxy; lower is the value, flater will be the galaxy
             else
-                inclination = (RandomN.Double() * maxInclination);
+                inclination = (random.NextDouble() * maxInclination);
             
-            meanAnomalyAtEpoch = RandomN.Double() * doubleDataDic["seed"] * 10;
-            longitudeOfAscendingNode = RandomN.Double() * doubleDataDic["seed"] * 100;
-            epoch = RandomN.Double() * doubleDataDic["seed"] * 1000;
+            meanAnomalyAtEpoch = random.NextDouble() * doubleDataDic["seed"] * 10;
+            longitudeOfAscendingNode = random.NextDouble() * doubleDataDic["seed"] * 100;
+            epoch = random.NextDouble() * doubleDataDic["seed"] * 1000;
 
             semiMajorAxis *= 9.461e+15; //Conversion in meters; 9,461e+15 = 1 Ly in meter
 

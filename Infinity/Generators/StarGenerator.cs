@@ -131,6 +131,17 @@ namespace Infinity.Generators
                 string starFreqS = Star.Specific(starDatas, allClasses[classID], "Rarity");
                 Double.TryParse(starFreqS, out double starFreq);
 
+
+
+
+                //TEMP
+
+                //frequency = 99.9999;
+
+
+
+
+
                 //Gets the surface temperature
                 cumuledFrequencies += starFreq;
                 if (frequency < cumuledFrequencies)
@@ -249,7 +260,7 @@ namespace Infinity.Generators
             properties.Add("Color Blue", Convert.ToString(blue));
             properties.Add("Color Green", Convert.ToString(green));
             properties.Add("Star Luminosity Class", starLumClass);
-            properties.Add("Corona Path", @"Infinity\Templates\Coronas\" + allClasses[classID] + starLumClass + " V.png");
+            properties.Add("Corona Path", @"Infinity\Templates\Coronas\V\" + allClasses[classID] + @"\" + starLumClass + ".png");
 
             return properties;
         }

@@ -263,7 +263,8 @@ namespace Infinity
 
             //--Removing stars beforehand created
             Console.WriteLine("\nRemoving old stars..");
-            string[] starFileList = Directory.GetFiles(gameDataPath + "\\Infinity\\Stars\\", "*.cfg");
+            string[] starFileList = Directory.GetFiles(gameDataPath + @"\Infinity\StarSystems\Stars", "*.cfg");
+            
 
             foreach (string file in starFileList)
             {

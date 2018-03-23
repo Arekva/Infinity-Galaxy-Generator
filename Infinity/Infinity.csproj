@@ -8,7 +8,8 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>E:\Code\KSP\Plugins\Infinity\Infinity\Builds\</OutputPath>
+    <OutputPath>Output-Exectutable\</OutputPath>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

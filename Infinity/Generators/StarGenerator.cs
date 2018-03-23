@@ -173,7 +173,7 @@ namespace Infinity.Generators
                         Double.TryParse(maxMassS, out maxMass);
                     }
 
-                    
+
 
                     break;
                 }

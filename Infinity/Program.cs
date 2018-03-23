@@ -14,12 +14,8 @@ namespace Infinity
         public static void Main(string[] args)
         {
             //------Global Variables------//
-<<<<<<< HEAD
-            Random random = new Random();
-=======
             bool Dev = false;
 
->>>>>>> 9df9afce10916419616eb328835e51026adec4f5
 
             bool ok = false;
 
@@ -36,7 +32,7 @@ namespace Infinity
             int galaxyType;
 
             //Seed Generation--
-            
+            Random random = new Random();
             int seed = random.Next(0, int.MaxValue);
             //-----------------
 
@@ -267,14 +263,12 @@ namespace Infinity
 
             //--Removing stars beforehand created
             Console.WriteLine("\nRemoving old stars..");
-            string[] starFileList = Directory.GetFiles(gameDataPath + @"\Infinity\StarSystems\Stars\", "*.cfg");
+            string[] starFileList = Directory.GetFiles(gameDataPath + "\\Infinity\\Stars\\", "*.cfg");
 
             foreach (string file in starFileList)
             {
                 File.Delete(file);
             }
-
-            starFileList = Directory.GetFiles(gameDataPath + @"\Infinity\StarSystems\Cache\", "*.bin");
             //---------------
 
             Console.WriteLine("\nGenerating the galaxy..");

@@ -262,11 +262,20 @@ namespace Infinity
             //---------------------------------------------------------------------------
 
             //--Removing stars beforehand created
-            Console.WriteLine("\nRemoving old stars..");
+            Console.WriteLine("\nRemoving old star systems..");
             string[] starFileList = Directory.GetFiles(gameDataPath + @"\Infinity\StarSystems\Stars", "*.cfg");
-            
+            string[] planetFileList = Directory.GetFiles(gameDataPath + @"\Infinity\Planets", "*.cfg");
+            string[] moonFileList = Directory.GetFiles(gameDataPath + @"\Infinity\Planets\Moons", "*.cfg");
 
             foreach (string file in starFileList)
+            {
+                File.Delete(file);
+            }
+            foreach (string file in planetFileList)
+            {
+                File.Delete(file);
+            }
+            foreach (string file in moonFileList)
             {
                 File.Delete(file);
             }

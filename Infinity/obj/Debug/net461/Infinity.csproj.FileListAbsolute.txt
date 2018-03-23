@@ -6,3 +6,9 @@ C:\Users\arthu\Documents\GitHub\Infinity-Galaxy-Generator\Infinity\obj\Debug\net
 C:\Users\arthu\Documents\GitHub\Infinity-Galaxy-Generator\Infinity\obj\Debug\net461\Infinity.exe
 C:\Users\arthu\Documents\GitHub\Infinity-Galaxy-Generator\Infinity\obj\Debug\net461\Infinity.pdb
 C:\Users\arthu\Documents\GitHub\Infinity-Galaxy-Generator\Infinity\obj\Debug\net461\Infinity.csprojResolveAssemblyReference.cache
+C:\Users\caleb\Documents\GitHub\Infinity-Galaxy-Generator\Infinity\obj\Debug\net461\Infinity.csprojResolveAssemblyReference.cache
+C:\Users\caleb\Documents\GitHub\Infinity-Galaxy-Generator\Infinity\obj\Debug\net461\Infinity.csproj.CoreCompileInputs.cache
+C:\Users\caleb\Documents\GitHub\Infinity-Galaxy-Generator\Infinity\obj\Debug\net461\Infinity.AssemblyInfoInputs.cache
+C:\Users\caleb\Documents\GitHub\Infinity-Galaxy-Generator\Infinity\obj\Debug\net461\Infinity.AssemblyInfo.cs
+C:\Users\caleb\Documents\GitHub\Infinity-Galaxy-Generator\Infinity\obj\Debug\net461\Infinity.exe
+C:\Users\caleb\Documents\GitHub\Infinity-Galaxy-Generator\Infinity\obj\Debug\net461\Infinity.pdb

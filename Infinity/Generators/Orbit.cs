@@ -19,7 +19,7 @@ namespace Infinity.Generators
                 if (doubleDataDic["galaxySize"] == 1)
                    maxInclination = 15;
                 else
-                    maxInclination = 90;
+                   maxInclination = 90;
 
             double eccentricity = 0;
                 double maxEccentricity = 0.1;
@@ -37,8 +37,24 @@ namespace Infinity.Generators
             eccentricity = random.NextDouble() * maxEccentricity;
             semiMajorAxis = random.NextDouble() * doubleDataDic["galaxySize"];
 
-            if (doubleDataDic["galaxySize"] == 1) 
-                inclination = (random.NextDouble() * maxInclination ) / semiMajorAxis * 0.7; //The "sMA * x" is to have a bumble at the center / flat on the borders of the spiral galaxy; lower is the value, flater will be the galaxy
+            if (doubleDataDic["galaxyType"] == 1)
+            {
+                inclination = 4;
+
+                double incMultiplier = semiMajorAxis / doubleDataDic["galaxySize"];
+                //Console.WriteLine("\nincMultiplier = {0}", incMultiplier);
+
+                double incInversionMult = 1 - incMultiplier;
+                //Console.WriteLine("incInversionMult = {0}", incInversionMult);
+
+                double incMultiplierFinal = incInversionMult * 10;
+                //Console.WriteLine("incMultiplierFinal = {0}", incMultiplierFinal);
+
+                inclination = 10 * (1- (semiMajorAxis / doubleDataDic["galaxySize"]));
+                //Console.WriteLine("inclination = {0}", inclination);
+
+                //inclination = (random.NextDouble() * maxInclination) / semiMajorAxis * 0.7; //The "sMA * x" is to have a bumble at the center / flat on the borders of the spiral galaxy; lower is the value, flater will be the galaxy
+            }
             else
                 inclination = (random.NextDouble() * maxInclination);
             

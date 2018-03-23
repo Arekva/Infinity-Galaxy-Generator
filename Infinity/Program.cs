@@ -14,14 +14,23 @@ namespace Infinity
         public static void Main(string[] args)
         {
             //------Global Variables------//
+<<<<<<< HEAD
             Random random = new Random();
+=======
+            bool Dev = false;
+
+>>>>>>> 9df9afce10916419616eb328835e51026adec4f5
 
             bool ok = false;
 
             int errorDisplayTime = 750;
 
-            string gameDataPath;
-
+            string gameDataPath = "Path To GameData"; //Placeholder so it doesn't throw an error
+            if (File.Exists("C:\\Infinity\\Developer.INFINITY"))
+            {
+                Dev = true;
+                gameDataPath = File.ReadAllText("C:\\Infinity\\Developer.INFINITY");
+            }
             int starNumber;
             double galaxySize;
             int galaxyType;
@@ -46,22 +55,30 @@ namespace Infinity
             //User's GameData input checking
             while (true)
             {
-                Console.WriteLine("Welcome in Infinity, the procedural Galaxy generator!\n\nPlease enter here your GameData folder path:");
+                if (!Dev)
+                {
+                    Console.WriteLine("Welcome in Infinity, the procedural Galaxy generator!\n\nPlease enter here your GameData folder path:");
 
-                gameDataPath = Console.ReadLine();
+                    gameDataPath = Console.ReadLine();
 
-                if (InputCheck.GameData(gameDataPath) == true)
-                    break;
+                    if (InputCheck.GameData(gameDataPath) == true)
+                        break;
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("GameData folder incorrect, retry with a correct one.");
+                        Console.ResetColor();
 
+                        Thread.Sleep(errorDisplayTime);
+
+                        Console.Clear();
+                    }
+                }
                 else
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("GameData folder incorrect, retry with a correct one.");
-                    Console.ResetColor();
-
-                    Thread.Sleep(errorDisplayTime);
-
-                    Console.Clear();
+                    Console.WriteLine("Congratulations! I have detected that you are a developer. Your GameData is located at: " + gameDataPath + ".");
+                    Console.WriteLine("You have also bypassed the checks for a proper GameData. Live on the edge, but be careful.");
+                    break;
                 }
             }
 
@@ -79,7 +96,11 @@ namespace Infinity
                 InputCheck.StarNumber(input, out ok, out starNumber);
 
                 if (ok)
+                {
+                    File.WriteAllText(gameDataPath + "\\Infinity\\SharedData\\StarCount.INFINITY", Convert.ToString(starNumber));
                     break;
+                }
+
 
                 else
                 {

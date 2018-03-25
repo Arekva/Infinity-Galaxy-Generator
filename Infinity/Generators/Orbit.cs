@@ -17,52 +17,46 @@ namespace Infinity.Generators
 
                 //Max Inclination depends of the galaxy type, so:
                 if (doubleDataDic["galaxySize"] == 1)
-                   maxInclination = 15;
+                   maxInclination = 10;
                 else
                    maxInclination = 90;
 
             double eccentricity = 0;
                 double maxEccentricity = 0.1;
-
             double semiMajorAxis = 0;
-
             double meanAnomalyAtEpoch = 0;
-
             double longitudeOfAscendingNode = 0;
-
             double epoch = 0;
             //------------------------------------------
 
             //----Generating elements----
-            eccentricity = random.NextDouble() * maxEccentricity;
+            //eccentricity = random.NextDouble() * maxEccentricity;
             semiMajorAxis = random.NextDouble() * doubleDataDic["galaxySize"];
 
+            //If it is a spiral galaxy
             if (doubleDataDic["galaxyType"] == 1)
             {
-                inclination = 4;
+                
+                longitudeOfAscendingNode = random.NextDouble() * 10 + 3;
 
-                double incMultiplier = semiMajorAxis / doubleDataDic["galaxySize"];
-                //Console.WriteLine("\nincMultiplier = {0}", incMultiplier);
+                 double incMultiplier = semiMajorAxis / doubleDataDic["galaxySize"];
 
-                double incInversionMult = 1 - incMultiplier;
-                //Console.WriteLine("incInversionMult = {0}", incInversionMult);
+                 double incInversionMult = 1 - incMultiplier;
 
-                double incMultiplierFinal = incInversionMult * 10;
-                //Console.WriteLine("incMultiplierFinal = {0}", incMultiplierFinal);
+                 double incMultiplierFinal = incInversionMult * 6;
 
-                inclination = 10 * (1- (semiMajorAxis / doubleDataDic["galaxySize"]));
-                //Console.WriteLine("inclination = {0}", inclination);
+                 inclination = Math.Sqrt(maxInclination * (1- (semiMajorAxis / doubleDataDic["galaxySize"])));
 
-                //inclination = (random.NextDouble() * maxInclination) / semiMajorAxis * 0.7; //The "sMA * x" is to have a bumble at the center / flat on the borders of the spiral galaxy; lower is the value, flater will be the galaxy
+                inclination = (random.NextDouble() * 6) + 10;
+                //inclination = (random.NextDouble() * maxInclination) / semiMajorAxis * 0.7; //The "sMA * x" is to have a bumble at the center / flat on the borders of the spiral galaxy; lower is the value, flater will be the galaxy*/
             }
             else
-                inclination = (random.NextDouble() * maxInclination);
-            
-            meanAnomalyAtEpoch = random.NextDouble() * doubleDataDic["seed"] * 10;
-            longitudeOfAscendingNode = random.NextDouble() * doubleDataDic["seed"] * 100;
-            epoch = random.NextDouble() * doubleDataDic["seed"] * 1000;
+            {
+                inclination = (random.NextDouble() * 90);
+                longitudeOfAscendingNode = (1 / (doubleDataDic["seed"]) * 100);
+            }
 
-            semiMajorAxis *= 9.461e+15; //Conversion in meters; 9,461e+15 = 1 Ly in meter
+            meanAnomalyAtEpoch = (random.NextDouble() * 100000);
 
             //----Packing up all the elements in a single dictionary----------------------
             Dictionary<string, double> orbitalElements = new Dictionary<string, double>();

@@ -47,36 +47,47 @@ namespace Infinity.Generators
             globalProperties.Add("Color Blue", globalPropertiesComma["Color Blue"].Replace(",", "."));
             globalProperties.Add("Star Luminosity Class", globalPropertiesComma["Star Luminosity Class"].Replace(",", "."));
             globalProperties.Add("Corona Path", globalPropertiesComma["Corona Path"].Replace(",", "."));
+            globalProperties.Add("Habitable Zone Min", globalPropertiesComma["Habitable Zone Min"].Replace(",", "."));
+            globalProperties.Add("Habitable Zone Best", globalPropertiesComma["Habitable Zone Best"].Replace(",", "."));
+            globalProperties.Add("Habitable Zone Max", globalPropertiesComma["Habitable Zone Max"].Replace(",", "."));
 
             //Generates intensity curves
             Double.TryParse(globalPropertiesComma["Luminosity"], out double luminosity);
             Double.TryParse(globalPropertiesComma["Radius"], out double radius);
+            string starClass = globalPropertiesComma["Star Class"];
 
-            //Scaled Space
+            //Scaled Space max: 1.5E+11
+            double maxValue = 1.5E+11;
+
             double key1SCx = 2E+07;
             key1SCx *= luminosity;
+
             double key2SCx = 1E+9;
             key2SCx *= luminosity;
+
             double key3SCx = 2.82E+9;
             key3SCx *= luminosity;
 
+            //if (starClass.Equals("O"))
             luminosity *= 40;
             if (radius > 1)
                 luminosity *= radius;
             else
                 luminosity /= radius;
 
-            
+
 
             //Normal
+            maxValue = 1.5E+12;
+
             double key1x = 1.35E+10;
             key1x *= luminosity;
+
             double key2x = 1E+11;
             key2x *= luminosity;
+
             double key3x = 2.82E+11;
             key3x *= luminosity;
-
-            
 
             //Power number
             double key0y = 1; //Kerbol is 0.9 but hey.
@@ -162,7 +173,8 @@ namespace Infinity.Generators
                 .Replace("#VAR-BRIGHTNESSCURVE-KEY1X", Datas.Query.Star.Specific(starProperties, "Global Properties", "BC KEY 1x"))
                 .Replace("#VAR-BRIGHTNESSCURVE-KEY2X", Datas.Query.Star.Specific(starProperties, "Global Properties", "BC KEY 2x"))
                 .Replace("#VAR-BRIGHTNESSCURVE-KEY3X", Datas.Query.Star.Specific(starProperties, "Global Properties", "BC KEY 3x"));
-                
+
+            habZonePlanetHelp(gameDataPath, starCount, starProperties);
 
             return starFile;
             //File.WriteAllText(stringDataDic["gameDataPath"] + "\\Infinity\\Stars\\Star " + Convert.ToString(starCount) + ".cfg", templateFile);
@@ -201,6 +213,36 @@ namespace Infinity.Generators
             return starFile;
         }
 
+        public static void habZonePlanetHelp(string gameDataPath, int starCount, Dictionary<string, Dictionary<string, string>> starProperties)
+        {
+            string[] planetFiles = new string[2];
+            string template = File.ReadAllText(gameDataPath + @"\Infinity\Templates\TestPlanetHabZone.cfg");
+
+            string planetFileHot = template
+                .Replace("NEEDS[!Kopernicus]", "FOR[Infinity]")
+                .Replace("#VAR-STARID", Convert.ToString(starCount + 1))
+                .Replace("#VAR-ZONE", "Hot")
+                .Replace("#VAR-SMA", Datas.Query.Star.Specific(starProperties, "Global Properties", "Habitable Zone Min"))
+                .Replace("#VAR-COLOR", "#ff0000");
+
+            string planetFileBest = template
+                .Replace("NEEDS[!Kopernicus]", "FOR[Infinity]")
+                .Replace("#VAR-STARID", Convert.ToString(starCount + 1))
+                .Replace("#VAR-ZONE", "Best")
+                .Replace("#VAR-SMA", Datas.Query.Star.Specific(starProperties, "Global Properties", "Habitable Zone Best"))
+                .Replace("#VAR-COLOR", "#00ff00");
+
+            string planetFileCold = template
+                .Replace("NEEDS[!Kopernicus]", "FOR[Infinity]")
+                .Replace("#VAR-STARID", Convert.ToString(starCount + 1))
+                .Replace("#VAR-ZONE", "Cold")
+                .Replace("#VAR-SMA", Datas.Query.Star.Specific(starProperties, "Global Properties", "Habitable Zone Max"))
+                .Replace("#VAR-COLOR", "#0000ff");
+
+            File.WriteAllText(gameDataPath + @"\Infinity\StarSystems\Planets\Planet Hot " + Convert.ToString(starCount + 1) + ".cfg", planetFileHot);
+            File.WriteAllText(gameDataPath + @"\Infinity\StarSystems\Planets\Planet Best " + Convert.ToString(starCount + 1) + ".cfg", planetFileBest);
+            File.WriteAllText(gameDataPath + @"\Infinity\StarSystems\Planets\Planet Cold " + Convert.ToString(starCount + 1) + ".cfg", planetFileCold);
+        }
         /// <summary>
         /// Creates the galaxy with generated stars, planet, and other celestial bodies
         /// </summary>
@@ -227,7 +269,7 @@ namespace Infinity.Generators
             //Generates new Sun position
             File.WriteAllText(gameDataPath + @"\Infinity\StarSystems\Stars\Sun.cfg", NewKerbolPosition(gameDataPath, doubleDataDic, random));
             stopwatch.Stop();
-            Console.WriteLine("\nDone! Time elapsed: {0:hh\\:mm\\:ss\\:ms}", stopwatch.Elapsed);
+            Console.WriteLine("\nDone! Time elapsed: {0:hh\\:mm\\:ss}", stopwatch.Elapsed);
         }
     }
 }

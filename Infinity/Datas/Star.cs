@@ -41,7 +41,7 @@ namespace Infinity.Datas
             /// </summary>
             int[] Temperature =
             {
-                30000, //O, let's say the max temperature is 50000K
+                20000, //O, OLD- 30000 |  let's say the max temperature is 50000K
                 10000, //B
                 7500, //A
                 6000, //F

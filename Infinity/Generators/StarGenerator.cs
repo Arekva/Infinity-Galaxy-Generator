@@ -31,19 +31,7 @@ namespace Infinity.Generators
      * M = Mass in solar masses
      *
      * 
-     * ---Habitable Zone----------
-     * 
-     * -Perfect habitable zone
-     * 
-     * d = L^(1/2)
-     * 
-     * -Min and max distance for the habitable zone
-     * 
-     * dMin = 0.9x(L^(1/2))
-     * dMax = 1.35x(L^(1/2))
-     * 
-     * d = distance of the perfect habitable zone (AU)
-     * L = Luminosity of the star divided by Sun's one
+     
      * 
      * ---Some Datas-------------
      * 
@@ -74,26 +62,22 @@ namespace Infinity.Generators
         private readonly double solMass = 1.989e+30; //kg
         private readonly double solVolumicMass = 1408; //kg/m^3
 
-
         //====================
 
+        /// <summary>
+        /// Generates a star
+        /// </summary>
+        /// <param name="starDatas"></param>
+        /// <param name="gameDataPath"></param>
+        /// <returns></returns>
         public static Dictionary<string, string> Generate(Dictionary<string, Dictionary<string, string>> starDatas, string gameDataPath)
-        {
-            //-- Star Properties --//
-            //double habitableZoneMin;    //AU
-            //double habitableZoneBest;   //AU
-            //double habitableZoneMax;    //AU
-            //---------------------//
-
-            //Creates the dictionary of star's properties
-            Dictionary<string, string> properties = new Dictionary<string, string>();
-
+        {       
             //Generates the star class
             double frequency = RandomN.Double() * 100;
 
             double cumuledFrequencies = 0;
 
-            //Star Properties
+            //Star Properties Variables
             int classID; //<---- where m is 0, k is 1 etc etc
 
             int minTemperature = 0;
@@ -108,7 +92,6 @@ namespace Infinity.Generators
             double minMass = 0;
             double mass = 0; //in solar mass when initia.
             double luminosity = 0;
-
             //---------------
 
             string[] allClasses =
@@ -122,25 +105,13 @@ namespace Infinity.Generators
                 "O"
             };
 
-            string starLumClass = "";
+            string starLumClass = "Error";
 
-            //Checks for each type of star
-
+            //Checks frequency for each type of star in the database
             for (classID = 0; classID < starDatas.Count; classID++)
             {
                 string starFreqS = Star.Specific(starDatas, allClasses[classID], "Rarity");
                 Double.TryParse(starFreqS, out double starFreq);
-
-
-
-
-                //TEMP
-
-                //frequency = 99.9999;
-
-
-
-
 
                 //Gets the surface temperature
                 cumuledFrequencies += starFreq;
@@ -173,8 +144,6 @@ namespace Infinity.Generators
                         Double.TryParse(maxMassS, out maxMass);
                     }
 
-
-
                     break;
                 }
             }
@@ -184,9 +153,62 @@ namespace Infinity.Generators
             luminosity = starLumCalcutation(radius, temperature); //Approximate one, lol.
             mass = (RandomN.Double() * (maxMass - minMass) + minMass)/radius; // the "divided by radius" is just a thing to (i hope) make the star more realistic..
 
+            //Calculates and loads the luminosity class
+            starLumClass = starLumClassCalc(temperature, minTemperature, maxTemperature);
+
+            //Calculates and loads the color
+            double[] rgb = KToRGB(temperature);
+
+            //Calculates the habitable zone
+            habitableZoneCalc(luminosity, out double minHabZone, out double bestHabZone, out double maxHabZone);
+
+            //Adding all the properties in a dictionnary
+            Dictionary<string, string> properties = new Dictionary<string, string>();
+
+            properties.Add("Star Class", Convert.ToString(allClasses[classID]));
+            properties.Add("Temperature", Convert.ToString(temperature));
+            properties.Add("Radius", Convert.ToString(radius));
+            properties.Add("Luminosity", Convert.ToString(luminosity));
+            properties.Add("Mass", Convert.ToString(mass));
+            properties.Add("Color Red", Convert.ToString(rgb[0]));
+            properties.Add("Color Green", Convert.ToString(rgb[1]));
+            properties.Add("Color Blue", Convert.ToString(rgb[2]));
+            properties.Add("Star Luminosity Class", starLumClass);
+            properties.Add("Corona Path", @"Infinity\Templates\Coronas\V\" + allClasses[classID] + @"\" + starLumClass + ".png");
+            properties.Add("Habitable Zone Min", Convert.ToString(minHabZone));
+            properties.Add("Habitable Zone Best", Convert.ToString(bestHabZone));
+            properties.Add("Habitable Zone Max", Convert.ToString(maxHabZone));
+
+            return properties;
+        }
+
+        /// <summary>
+        /// Calculates the habitable zone in AU
+        /// </summary>
+        /// <param name="luminosity"></param>
+        /// <param name="min"></param>
+        /// <param name="best"></param>
+        /// <param name="max"></param>
+        private static void habitableZoneCalc(double luminosity, out double min, out double best, out double max)
+        {
+            min = 0.9 * (Math.Pow(luminosity, 0.5));
+            best = Math.Pow(luminosity, 0.5);
+            max = 1.35 * (Math.Pow(luminosity, 0.5));
+        }
+
+        /// <summary>
+        /// Calculates star's luminosity class (0, 1, 2, etc)
+        /// </summary>
+        /// <param name="temperature"></param>
+        /// <param name="minTemperature"></param>
+        /// <param name="maxTemperature"></param>
+        /// <returns></returns>
+        private static string starLumClassCalc(double temperature, double minTemperature, double maxTemperature)
+        {
             //Gets the luminosity class in their type
             //%centage of the temperature in the range
-            double percentageTemp = ((double)temperature - (double)minTemperature)/ (double)(maxTemperature - (double)minTemperature)*10;
+            string starLumClass = "Error";
+            double percentageTemp = ((double)temperature - (double)minTemperature) / (double)(maxTemperature - (double)minTemperature) * 10;
             percentageTemp = Math.Round(percentageTemp);
 
             if (percentageTemp == 0)
@@ -219,51 +241,15 @@ namespace Infinity.Generators
             if ((percentageTemp == 9) || (percentageTemp == 10))
                 starLumClass = "0";
 
-
-
-            double[] rgb = KToRGB(temperature);
-
-            double red = rgb[0];
-            if (double.IsNaN(red))
-            {
-                red = 255;
-            }
-            double green = rgb[1];
-            if(double.IsNaN(green))
-            {
-                green = 255;
-            }
-            double blue = rgb[2];
-            if (double.IsNaN(blue))
-            {
-                blue = 255;
-            }
-
-            //TEMP------
-            /*string tempCoronaPathLumClass = "";
-            if ((starLumClass.Equals("9")) || (starLumClass.Equals("8")) || (starLumClass.Equals("7")))
-                tempCoronaPathLumClass = "9";
-
-            if ((starLumClass.Equals("6")) || (starLumClass.Equals("5")) || (starLumClass.Equals("4")) || (starLumClass.Equals("3")))
-                tempCoronaPathLumClass = "5";
-
-            if ((starLumClass.Equals("2")) || (starLumClass.Equals("1")) || (starLumClass.Equals("0")))
-                tempCoronaPathLumClass = "9";*/
-            //----------
-
-            properties.Add("Star Class", Convert.ToString(allClasses[classID]));
-            properties.Add("Temperature", Convert.ToString(temperature));
-            properties.Add("Radius", Convert.ToString(radius));
-            properties.Add("Luminosity", Convert.ToString(luminosity));
-            properties.Add("Mass", Convert.ToString(mass));
-            properties.Add("Color Red", Convert.ToString(red));
-            properties.Add("Color Blue", Convert.ToString(blue));
-            properties.Add("Color Green", Convert.ToString(green));
-            properties.Add("Star Luminosity Class", starLumClass);
-            properties.Add("Corona Path", @"Infinity\Templates\Coronas\V\" + allClasses[classID] + @"\" + starLumClass + ".png");
-
-            return properties;
+            return starLumClass;
         }
+
+        /// <summary>
+        /// Calculates star's luminosity
+        /// </summary>
+        /// <param name="radius"></param>
+        /// <param name="temperature"></param>
+        /// <returns></returns>
         private static double starLumCalcutation(double radius, double temperature)
         {
             //not working one L = 4*π*R²*σ*T⁴
@@ -273,6 +259,11 @@ namespace Infinity.Generators
             return luminosity;
         }
         
+        /// <summary>
+        /// Calculates star's color by temperature
+        /// </summary>
+        /// <param name="Temperature"></param>
+        /// <returns></returns>
         private static double[] KToRGB(int Temperature)
         //took and converted from http://www.tannerhelland.com/4435/convert-temperature-rgb-algorithm-code/
         {
@@ -358,6 +349,15 @@ namespace Infinity.Generators
             Green = Math.Round(Green);
             Blue = Math.Round(Blue);
 
+            if (double.IsNaN(Red))
+                Red = 255;
+
+            if (double.IsNaN(Green))
+                Green = 255;
+
+            if (double.IsNaN(Blue))
+                Blue = 255;
+
             rgb = new double[]
             {
                 Red,
@@ -367,7 +367,5 @@ namespace Infinity.Generators
 
             return rgb;
         }
-
-        //private static double tempInTempRange(int te)
     }
 }

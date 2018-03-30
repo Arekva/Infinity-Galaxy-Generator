@@ -272,14 +272,15 @@ namespace Infinity
             {
                 File.Delete(file);
             }
-            foreach (string file in planetFileList)
+            //No touchy
+            /*foreach (string file in planetFileList)
             {
                 File.Delete(file);
             }
             foreach (string file in moonFileList)
             {
                 File.Delete(file);
-            }
+            }*/
             foreach (string file in planetHabZoneList)
             {
                 File.Delete(file);
@@ -289,8 +290,9 @@ namespace Infinity
             Console.WriteLine("\nGenerating the galaxy..");
             Generator.Galaxy(gameDataPath, galaxySettings, starDatas, random);
 
-            Console.WriteLine("\nGalaxy generated, HF!\nPress any key to leave the program..");
-
+            Console.WriteLine("\nGalaxy generated. Have fun!");
+            //Exit function
+            Console.WriteLine("\nPress any key to exit.");
             Console.ReadKey();
         }
     }

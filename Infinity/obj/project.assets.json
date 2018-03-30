@@ -9,8 +9,7 @@
     ".NETFramework,Version=v4.6.1": []
   },
   "packageFolders": {
-    "C:\\Users\\arthu\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackagesFallback\\": {},
+    "C:\\Users\\caleb\\.nuget\\packages\\": {},
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
@@ -19,20 +18,18 @@
       "hideWarningsAndErrors": true
     },
     "restore": {
-      "projectUniqueName": "C:\\Users\\arthu\\Documents\\GitHub\\Infinity-Galaxy-Generator\\Infinity\\Infinity.csproj",
+      "projectUniqueName": "C:\\Users\\caleb\\Documents\\GitHub\\Infinity-Galaxy-Generator\\Infinity\\Infinity.csproj",
       "projectName": "Infinity",
-      "projectPath": "C:\\Users\\arthu\\Documents\\GitHub\\Infinity-Galaxy-Generator\\Infinity\\Infinity.csproj",
-      "packagesPath": "C:\\Users\\arthu\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\arthu\\Documents\\GitHub\\Infinity-Galaxy-Generator\\Infinity\\obj\\",
+      "projectPath": "C:\\Users\\caleb\\Documents\\GitHub\\Infinity-Galaxy-Generator\\Infinity\\Infinity.csproj",
+      "packagesPath": "C:\\Users\\caleb\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\caleb\\Documents\\GitHub\\Infinity-Galaxy-Generator\\Infinity\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackagesFallback\\",
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\arthu\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.Fallback.config"
+        "C:\\Users\\caleb\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net461"

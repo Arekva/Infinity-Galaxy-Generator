@@ -56,7 +56,7 @@ namespace Infinity.Generators
                 longitudeOfAscendingNode = (1 / (doubleDataDic["seed"]) * 100);
             }
 
-            meanAnomalyAtEpoch = (random.NextDouble() * 100000);
+            meanAnomalyAtEpoch = (random.NextDouble() * 1000);
 
             //----Packing up all the elements in a single dictionary----------------------
             Dictionary<string, double> orbitalElements = new Dictionary<string, double>();

@@ -11,10 +11,9 @@ namespace Infinity.Generators
         /// Generates a random double between 0 and 1
         /// </summary>
         /// <returns></returns>
-        public static double Double()
+        public static double Double(Random random)
         {
             //Thread.Sleep(3);
-            Random random = new Random();
             return random.NextDouble();
         }
 
@@ -22,10 +21,9 @@ namespace Infinity.Generators
         /// Generates a random Int32 between a minimal and maximal value
         /// </summary>
         /// <returns></returns>
-        public static int Int32(int minValue, int maxValue)
+        public static int Int32(Random random, int minValue, int maxValue)
         {
             //Thread.Sleep(3);
-            Random random = new Random();
             return random.Next(minValue, maxValue + 1);
         }
     }

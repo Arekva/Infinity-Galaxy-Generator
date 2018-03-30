@@ -6,6 +6,10 @@ using System.Diagnostics;
 using Infinity.Generators;
 using Infinity.Datas;
 using Infinity.Datas.Query;
+using System.Globalization;
+using System.Linq;
+using System.Reflection;
+using System.Text;
 
 namespace Infinity
 {
@@ -13,6 +17,9 @@ namespace Infinity
     {
         public static void Main(string[] args)
         {
+            //I still prefer comma system
+            Thread.CurrentThread.CurrentCulture = Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+
             //------Global Variables------//
             bool Dev = false;
 
@@ -31,9 +38,9 @@ namespace Infinity
             double galaxySize;
             int galaxyType;
 
+            Random randomSeed = new Random();
             //Seed Generation--
-            Random random = new Random();
-            int seed = random.Next(0, int.MaxValue);
+            int seed = randomSeed.Next(int.MinValue, int.MaxValue);
             //-----------------
 
             double[] defaultValues =
@@ -41,7 +48,6 @@ namespace Infinity
                 50,     //0 - Star Number
                 2,      //1 - Galaxy size
                 1,      //2 - Galaxy Type (1 stands for Spiral, 2 for Elliptical
-                seed    //3 - Seed
             };
 
             //----------------------------//
@@ -136,7 +142,7 @@ namespace Infinity
                     Console.Clear();
                 }
             }
-
+            
             //User's advanced mode inputs
             while (true)
             {
@@ -189,29 +195,10 @@ namespace Infinity
 
                             input = Console.ReadLine();
 
-                            if (input.Equals(""))
-                                break;
-
-                            else
-                            {
-                                InputCheck.Seed(input, out ok, out seed);
-
-                                if (ok)
-                                    break;
-
-                                else
-                                {
-                                    Console.ForegroundColor = ConsoleColor.Red;
-                                    Console.WriteLine("Number incorrect, retry with a correct one (integrer)");
-                                    Console.ResetColor();
-
-                                    Thread.Sleep(errorDisplayTime * 3);
-
-                                    Console.Clear();
-                                }
-                            }
+                            if (input.Equals("")) break;
+                            else seed = input.GetHashCode(); break;
+                                
                         }
-
                     }
                     break;
                 }
@@ -227,6 +214,8 @@ namespace Infinity
                 }
 
             }
+
+            Random random = new Random(seed);
 
             //User's choice on delete;
             while (true)
@@ -257,9 +246,12 @@ namespace Infinity
             galaxySettings.Add("starNumber", starNumber);
             galaxySettings.Add("galaxySize", galaxySize);
             galaxySettings.Add("galaxyType", galaxyType);
-            galaxySettings.Add("seed", seed);
 
             //---------------------------------------------------------------------------
+
+            //Saves the seed into a file
+            File.WriteAllText(gameDataPath + @"\Infinity\SharedData\Seed.INFINITY", ("" + seed));
+
 
             //--Removing stars beforehand created
             Console.WriteLine("\nRemoving old star systems..");

@@ -52,8 +52,8 @@ namespace Infinity.Generators
             }
             else
             {
-                inclination = (random.NextDouble() * 90);
-                longitudeOfAscendingNode = (1 / (doubleDataDic["seed"]) * 100);
+                inclination = random.NextDouble() * 90;
+                longitudeOfAscendingNode = random.NextDouble() * 360;
             }
 
             meanAnomalyAtEpoch = (random.NextDouble() * 1000);

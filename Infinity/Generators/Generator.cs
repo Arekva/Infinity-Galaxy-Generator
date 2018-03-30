@@ -34,7 +34,7 @@ namespace Infinity.Generators
             orbitProperties.Add("Epoch", Convert.ToString(orbit["epoch"]).Replace(",", "."));
 
             //Generates star class
-            Dictionary<string, string> globalPropertiesComma = StarGenerator.Generate(starDatabase, gameDataPath);
+            Dictionary<string, string> globalPropertiesComma = StarGenerator.Generate(starDatabase, gameDataPath, random);
 
             Dictionary<string, string> globalProperties = new Dictionary<string, string>();
             globalProperties.Add("Star Class", globalPropertiesComma["Star Class"].Replace(",", "."));
@@ -98,15 +98,15 @@ namespace Infinity.Generators
             //key2y *= luminosity;
 
 
-            globalProperties.Add("IN KEY 1x", Convert.ToString(key1x).Replace(",", "."));
-            globalProperties.Add("IN KEY 2x", Convert.ToString(key2x).Replace(",", "."));
-            globalProperties.Add("IN KEY 3x", Convert.ToString(key3x).Replace(",", "."));
-            globalProperties.Add("IN KEY SC 1x", Convert.ToString(key1SCx).Replace(",", "."));
-            globalProperties.Add("IN KEY SC 2x", Convert.ToString(key2SCx).Replace(",", "."));
-            globalProperties.Add("IN KEY SC 3x", Convert.ToString(key3SCx).Replace(",", "."));
-            globalProperties.Add("IN KEY 0y", Convert.ToString(key0y).Replace(",", "."));
-            globalProperties.Add("IN KEY 1y", Convert.ToString(key1y).Replace(",", "."));
-            globalProperties.Add("IN KEY 2y", Convert.ToString(key2y).Replace(",", "."));
+            globalProperties.Add("IN KEY 1x", Convert.ToString(key1x));
+            globalProperties.Add("IN KEY 2x", Convert.ToString(key2x));
+            globalProperties.Add("IN KEY 3x", Convert.ToString(key3x));
+            globalProperties.Add("IN KEY SC 1x", Convert.ToString(key1SCx));
+            globalProperties.Add("IN KEY SC 2x", Convert.ToString(key2SCx));
+            globalProperties.Add("IN KEY SC 3x", Convert.ToString(key3SCx));
+            globalProperties.Add("IN KEY 0y", Convert.ToString(key0y));
+            globalProperties.Add("IN KEY 1y", Convert.ToString(key1y));
+            globalProperties.Add("IN KEY 2y", Convert.ToString(key2y));
 
 
             //Generates sunflare size curve

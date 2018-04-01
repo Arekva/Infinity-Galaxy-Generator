@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Threading;
 using System.Diagnostics;
+
 namespace Infinity.Generators
 {
     class Generator
@@ -209,7 +210,6 @@ namespace Infinity.Generators
             else
                 partner = "Star " + starCount;
 
-            Console.WriteLine(partner);
             fileDown = template
                 .Replace("NEEDS[!Kopernicus]", "FOR[Infinity]")
                 .Replace("#VAR-PARTNER", partner)
@@ -269,7 +269,10 @@ namespace Infinity.Generators
 
             return starFile;
         }
-
+        
+        /// <summary>
+        /// Creates planets to visualize where is the habitable zone
+        /// </summary>
         public static void habZonePlanetHelp(string gameDataPath, int starCount, Dictionary<string, Dictionary<string, string>> starProperties)
         {
             string[] planetFiles = new string[2];
@@ -300,6 +303,7 @@ namespace Infinity.Generators
             File.WriteAllText(gameDataPath + @"\Infinity\StarSystems\Planets\Planet Best " + Convert.ToString(starCount + 1) + ".cfg", planetFileBest);
             File.WriteAllText(gameDataPath + @"\Infinity\StarSystems\Planets\Planet Cold " + Convert.ToString(starCount + 1) + ".cfg", planetFileCold);
         }
+
         /// <summary>
         /// Creates the galaxy with generated stars, planet, and other celestial bodies
         /// </summary>
@@ -316,8 +320,8 @@ namespace Infinity.Generators
             stopwatch.Start();
             for (int i = 0; i < doubleDataDic["starNumber"]; i++)
             {
-                //Console.SetCursorPosition(26, 0);
-                //Console.Write(i + 1);
+                Console.SetCursorPosition(26, 0);
+                Console.Write(i + 1);
                 Dictionary<string, Dictionary<string, string>> Star = Generator.Star(starDatabase, doubleDataDic, gameDataPath, random);
 
                 File.WriteAllText(gameDataPath + @"\Infinity\StarSystems\Stars\Star " + Convert.ToString(i + 1) + ".cfg", Generator.StarFile(Star, gameDataPath, i, doubleDataDic));

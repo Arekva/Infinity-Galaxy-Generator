@@ -17,150 +17,171 @@ namespace Infinity
     {
         public static void Main(string[] args)
         {
-            //I still prefer comma system
+            //====Things for the program itself====//
+            //Uses american decimal system (i hate it)
             Thread.CurrentThread.CurrentCulture = Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
-
-            //------Global Variables------//
-            bool Dev = false;
-
-
-            bool ok = false;
-
-            int errorDisplayTime = 750;
-
-            string gameDataPath = "Path To GameData"; //Placeholder so it doesn't throw an error
-            if (File.Exists("C:\\Infinity\\Developer.INFINITY"))
+            Random randomSeed = new Random();
+            Random random;
+            //Here are the wanted folders to work in
+            string[] folders =
             {
-                Dev = true;
-                gameDataPath = File.ReadAllText("C:\\Infinity\\Developer.INFINITY");
-            }
+                @"StarSystems",
+                @"StarSystems\Cache",
+                @"StarSystems\Stars",
+                @"StarSystems\Planets",
+                @"StarSystems\Wormholes",
+
+                @"Planets",
+                @"Planets\Moons",
+
+                @"SharedData"
+            };
+            //=====================================//
+
+            //====Some Variables====//
+            string gameDataPath;
             int starNumber;
             double galaxySize;
             int galaxyType;
+            int defaultGalaxyType = 1; //Spiral
+            //======================//
 
-            Random randomSeed = new Random();
-            //Seed Generation--
-            int seed = randomSeed.Next(int.MinValue, int.MaxValue);
-            //-----------------
-
-            double[] defaultValues =
-            {
-                50,     //0 - Star Number
-                2,      //1 - Galaxy size
-                1,      //2 - Galaxy Type (1 stands for Spiral, 2 for Elliptical
-            };
-
-            //----------------------------//
-
+            //====Loads static datas====//
             Dictionary<string, Dictionary<string, string>> starDatas = Datas.Star.ComputeStarData();
+            //==========================//
 
-            //User's GameData input checking
-            while (true)
+            //[Already] generates the seed
+            int seed = randomSeed.Next(int.MinValue, int.MaxValue);
+
+            //Takes infos from the user, return infos and seed
+            seed = UserEntry(defaultGalaxyType, seed, out gameDataPath, out starNumber, out galaxySize, out galaxyType, out random);
+
+            //====Galaxy Settings====//
+            Dictionary<string, double> galaxySettings = new Dictionary<string, double>();
+            galaxySettings.Add("starNumber", starNumber);
+            galaxySettings.Add("galaxySize", galaxySize);
+            galaxySettings.Add("galaxyType", galaxyType);
+            //=======================//
+
+            FolderCheckingCreating(gameDataPath, folders);
+
+            OldFilesDeleting(gameDataPath, folders);
+
+            Console.WriteLine("\nGenerating the galaxy..");
+            Generator.Galaxy(gameDataPath, galaxySettings, starDatas, random);
+
+            Console.WriteLine("\nGalaxy generated. Have fun!");
+            //Exit function
+            Console.WriteLine("\nPress any key to exit.");
+            Console.ReadKey();
+        }
+
+        /// <summary>
+        /// Checks user's entries
+        /// </summary>
+        /// <param name="defaultGalaxyType"></param>
+        /// <param name="seed"></param>
+        /// <param name="gameDataPath"></param>
+        /// <param name="starNumber"></param>
+        /// <param name="galaxySize"></param>
+        /// <param name="galaxyType"></param>
+        /// <param name="random"></param>
+        /// <returns></returns>
+        public static int UserEntry(
+            int defaultGalaxyType, int seed, out string gameDataPath, out int starNumber, out double galaxySize, out int galaxyType, out Random random)
+        {
+            //====Things for the program itself====//
+            bool devMode = false;
+            bool ok; //For input checking
+            //=====================================//
+
+            //====Placeholders====//
+            gameDataPath = "Path To GameData";
+            starNumber = 0;
+            galaxySize = 0;
+            galaxyType = 1;
+            random = new Random();
+            //====================//
+
+            //Checks for the developper mode
+            if (File.Exists(@"C:\Infinity\Developer.INFINITY"))
             {
-                if (!Dev)
+                devMode = true;
+                gameDataPath = File.ReadAllText(@"C:\Infinity\Developer.INFINITY");
+            }
+
+            //Checks inputs
+            try
+            {
+                //Checks for the GameData path
+                while (true)
                 {
-                    Console.WriteLine("Welcome in Infinity, the procedural Galaxy generator!\n\nPlease enter here your GameData folder path:");
+                    if (!devMode)
+                    {
+                        Console.WriteLine("Welcome in Infinity, the procedural Galaxy generator!\n\nPlease enter here your GameData folder path:");
+                        gameDataPath = Console.ReadLine();
 
-                    gameDataPath = Console.ReadLine();
+                        if (InputCheck.GameData(gameDataPath) == true)
+                            break;
 
-                    if (InputCheck.GameData(gameDataPath) == true)
+                        else
+                        {
+                            Error("GameData folder incorrect, retry with a correct one.");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Congratulations! I have detected that you are a developer. Your GameData is located at: " + gameDataPath + ".");
+                        Console.WriteLine("You have also bypassed the checks for a proper GameData. Live on the edge, but be careful.");
                         break;
-                    else
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("GameData folder incorrect, retry with a correct one.");
-                        Console.ResetColor();
-
-                        Thread.Sleep(errorDisplayTime);
-
-                        Console.Clear();
                     }
                 }
-                else
+
+                //User's number of star input checking
+                while (true)
                 {
-                    Console.WriteLine("Congratulations! I have detected that you are a developer. Your GameData is located at: " + gameDataPath + ".");
-                    Console.WriteLine("You have also bypassed the checks for a proper GameData. Live on the edge, but be careful.");
-                    break;
-                }
-            }
+                    Console.WriteLine("How many stars do you want in your galaxy?\n\n" +
+                        "(Recommended: 25 for a decent framerate)");
 
-            //User's number of star input checking
-            while (true)
-            {
-                Console.WriteLine("\nHow many stars do you want in your galaxy?\n\n" +
-                    "Recommended:\n" +
-                    "-Small configs:  50 ~100\n" +
-                    "-Middle configs: 100~250\n" +
-                    "-High configs:   250~500");
+                    string input = Console.ReadLine();
 
-                string input = Console.ReadLine();
-
-                InputCheck.StarNumber(input, out ok, out starNumber);
-
-                if (ok)
-                {
-                    File.WriteAllText(gameDataPath + "\\Infinity\\SharedData\\StarCount.INFINITY", Convert.ToString(starNumber));
-                    break;
-                }
-
-
-                else
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Number incorrect, retry with a correct one (>0 or / and integer.)");
-                    Console.ResetColor();
-
-                    Thread.Sleep(errorDisplayTime * 2);
-
-                    Console.Clear();
-                }
-            }
-
-            //User's galaxy size input checking
-            while (true)
-            {
-                ok = false;
-
-                Console.WriteLine("\nWrite here the radius of your Galaxy in Light-Years\n" +
-                    "(minimal value is 0.01 Ly, max is what ksp can support, this means you have to be careful with high values.");
-
-                string input = Console.ReadLine();
-
-                InputCheck.GalaxySize(input, out ok, out galaxySize);
-
-                if (ok)
-                    break;
-
-                else
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Number incorrect, retry with a correct one (>0.01)");
-                    Console.ResetColor();
-
-                    Thread.Sleep(errorDisplayTime);
-
-                    Console.Clear();
-                }
-            }
-            
-            //User's advanced mode inputs
-            while (true)
-            {
-                ok = false;
-                Console.WriteLine("\nDo you want to access to the advanced settings? (y/n)");
-
-                string input = Console.ReadLine();
-
-                InputCheck.AdvancedSettings(input, out ok, out input);
-
-                if (ok)
-                {
-                    if (input.Equals("n"))
+                    if (Int32.TryParse(input, out starNumber))
                     {
-                        galaxyType = (int)defaultValues[2]; //Spiral Galaxy
-
+                        File.WriteAllText(gameDataPath + "\\Infinity\\SharedData\\StarCount.INFINITY", Convert.ToString(starNumber));
+                        break;
                     }
-                    else
+
+                    Error("Please put an integrer number");
+                }
+
+                //User's galaxy size input checking
+                while (true)
+                {
+                    Console.WriteLine("\nWrite here the radius of your Galaxy in Light-Years\n" +
+                        "(minimal value is 0.01 Ly, max is what ksp can support, this means you have to be careful with high values.");
+
+                    string input = Console.ReadLine();
+
+                    if (Double.TryParse(input, out galaxySize))
+                        break;
+
+                    Error("Number incorrect, retry with a correct one");
+                }
+
+                //User's advanced mode inputs
+                while (true)
+                {
+                    Console.WriteLine("\nDo you want to access to the advanced settings? (y/n)");
+
+                    string input = Console.ReadLine();
+
+                    if (input.Equals("n") || input.Equals("N"))
+                    {
+                        galaxyType = defaultGalaxyType; //Spiral Galaxy
+                        break;
+                    }
+
+                    if (input.Equals("y") || input.Equals("Y"))
                     {
                         while (true)//Galaxy type choice
                         {
@@ -168,9 +189,7 @@ namespace Infinity
 
                             input = Console.ReadLine();
 
-                            InputCheck.GalaxyChoice(input, out ok, out int inputInt);
-
-                            if (ok && (inputInt == 1 || inputInt == 2))
+                            if ((Int32.TryParse(input, out int inputInt) && (inputInt == 1 || inputInt == 2)))
                             {
                                 galaxyType = inputInt;
                                 break;
@@ -178,13 +197,7 @@ namespace Infinity
 
                             else
                             {
-                                Console.ForegroundColor = ConsoleColor.Red;
-                                Console.WriteLine("Number incorrect, retry with a correct one (integral number)");
-                                Console.ResetColor();
-
-                                Thread.Sleep(errorDisplayTime * 2);
-
-                                Console.Clear();
+                                Error("Number incorrect, retry with a correct one");
                             }
                         }
                         while (true) //Seed choice
@@ -197,100 +210,119 @@ namespace Infinity
 
                             if (input.Equals("")) break;
                             else seed = input.GetHashCode(); break;
-                                
+
                         }
+                        break;
                     }
-                    break;
+                    else
+                    {
+                        Error("Bad choice, retry with a correct one (y/n)");
+                    }
                 }
-                else
+
+                random = new Random(seed);
+
+                //User's choice on delete/generation;
+                while (true)
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Bad choice, retry with a correct one (write 'n' (no) or 'y' (yes))");
-                    Console.ResetColor();
+                    ok = false;
+                    Console.WriteLine("\nAre you sure to rebuild a whole new galaxy? The old one will be deleted and saves will be unusable (any key/n)");
 
-                    Thread.Sleep(errorDisplayTime * 3);
+                    string input = Console.ReadLine();
 
-                    Console.Clear();
+                    InputCheck.LastChoice(input, out ok, out input);
+
+                    if (input.Equals("n"))
+                    {
+                        Console.WriteLine("\nOk well bye, so.");
+                        Thread.Sleep(500);
+                        Environment.Exit(0);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Hold on some times, the program is removing old files and creating new ones...");
+                        break;
+                    }
                 }
-
             }
 
-            Random random = new Random(seed);
-
-            //User's choice on delete;
-            while (true)
+            catch (Exception e)
             {
-                ok = false;
-                Console.WriteLine("\nAre you sure to rebuild a whole new galaxy? The old one will be deleted and saves will be unusable (y/n)");
+                Error("Error during the process: " + e.ToString());
+            }
 
-                string input = Console.ReadLine();
+            return seed;
+        }
 
-                InputCheck.LastChoice(input, out ok, out input);
+        /// <summary>
+        /// Checks if folder are missing
+        /// </summary>
+        /// <param name="gameDataPath"></param>
+        /// <param name="folders"></param>
+        public static void FolderCheckingCreating(
+            string gameDataPath, string[] folders)
+        {
+            gameDataPath += @"\Infinity\";
 
-                if (input.Equals("n"))
+            //Detects if needed folder exits, and/or creates them if not
+            try
+            {
+                for (int i = 0; i <= folders.Length; i++)
                 {
-                    Console.WriteLine("\nOk well bye, so.");
-                    Thread.Sleep(errorDisplayTime);
-                    Environment.Exit(0);
+                    if (!Directory.Exists(gameDataPath + folders[i]))
+                    {
+                        Directory.CreateDirectory(gameDataPath + folders[i]);
+                    }
                 }
-                else
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Folder detection/creation failed: " + e.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Checks for older files to delete
+        /// </summary>
+        /// <param name="gameDataPath"></param>
+        /// <param name="folders"></param>
+        public static void OldFilesDeleting(
+            string gameDataPath, string[] folders)
+        {
+            gameDataPath += @"\Infinity\";
+
+            //Detects existing files and deleted them
+            try
+            {
+                for (int i = 0; i <= folders.Length; i++)
                 {
-                    Console.WriteLine("Hold on some times, the program is removing old files and creating new ones...");
-                    break;
+                    string[] files = Directory.GetFiles(gameDataPath + folders[i]);
+
+                    foreach (string file in files)
+                    {
+                        File.Delete(file);
+                    }
                 }
             }
-
-            //------------Dictionaries with all values, ready to be put in the generator !
-            //Doubles--
-            Dictionary<string, double> galaxySettings = new Dictionary<string, double>();
-            galaxySettings.Add("starNumber", starNumber);
-            galaxySettings.Add("galaxySize", galaxySize);
-            galaxySettings.Add("galaxyType", galaxyType);
-
-            //---------------------------------------------------------------------------
-
-            //Saves the seed into a file
-            File.WriteAllText(gameDataPath + @"\Infinity\SharedData\Seed.INFINITY", ("" + seed));
-
-
-            //--Removing stars beforehand created
-            Console.WriteLine("\nRemoving old star systems..");
-            string[] starFileList = Directory.GetFiles(gameDataPath + @"\Infinity\StarSystems\Stars", "*.cfg");
-            string[] planetFileList = Directory.GetFiles(gameDataPath + @"\Infinity\Planets", "*.cfg");
-            string[] moonFileList = Directory.GetFiles(gameDataPath + @"\Infinity\Planets\Moons", "*.cfg");
-            string[] planetHabZoneList = Directory.GetFiles(gameDataPath + @"\Infinity\StarSystems\Planets", "*.cfg");
-            string[] wormholes = Directory.GetFiles(gameDataPath + @"\Infinity\StarSystems\Wormholes", "*.cfg");
-
-            foreach (string file in starFileList)
+            catch (Exception e)
             {
-                File.Delete(file);
+                Error("File detection/delted failed: " + e.ToString());
             }
-            //"No touchy" -Carrot       "You sure?" -Tutur
-            /*foreach (string file in planetFileList)
-            {
-                File.Delete(file);
-            }
-            foreach (string file in moonFileList)
-            {
-                File.Delete(file);
-            }*/
-            foreach (string file in planetHabZoneList)
-            {
-                File.Delete(file);
-            }
-            foreach (string file in wormholes)
-            {
-                File.Delete(file);
-            }
-            //---------------
+        }
 
-            Console.WriteLine("\nGenerating the galaxy..");
-            Generator.Galaxy(gameDataPath, galaxySettings, starDatas, random);
+        /// <summary>
+        /// Displays message when error happens
+        /// </summary>
+        /// <param name="message"></param>
+        public static void Error(string message)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(message);
+            Console.ResetColor();
 
-            Console.WriteLine("\nGalaxy generated. Have fun!");
-            //Exit function
-            Console.WriteLine("\nPress any key to exit.");
-            Console.ReadKey();
+            Thread.Sleep(750);
+
+            Console.Clear();
         }
     }
 }

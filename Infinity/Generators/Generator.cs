@@ -26,7 +26,7 @@ namespace Infinity.Generators
 
             //Converts with dots instead of commas + in string
             Dictionary<string, string> orbitProperties = new Dictionary<string, string>();
-            orbitProperties.Add("Inclination", Convert.ToString(orbit["inclination"]).Replace(",","."));
+            orbitProperties.Add("Inclination", Convert.ToString(orbit["inclination"]).Replace(",", "."));
             orbitProperties.Add("Eccentricity", Convert.ToString(orbit["eccentricity"]).Replace(",", "."));
             orbitProperties.Add("Semi Major Axis", Convert.ToString(orbit["semiMajorAxis"]).Replace(",", "."));
             orbitProperties.Add("Mean Anomaly At Epoch", Convert.ToString(orbit["meanAnomalyAtEpoch"]).Replace(",", "."));
@@ -138,7 +138,7 @@ namespace Infinity.Generators
         /// <summary>
         /// Get the template file then save it with star's generated values
         /// </summary>
-        public static string StarFile(Dictionary<string, Dictionary<string, string>> starProperties, string gameDataPath, int starCount)
+        public static string StarFile(Dictionary<string, Dictionary<string, string>> starProperties, string gameDataPath, int starCount, Dictionary<string, double> doubleDataDic)
         {
             string template = File.ReadAllText(gameDataPath + "\\Infinity\\Templates\\Star.cfg");
 
@@ -174,10 +174,67 @@ namespace Infinity.Generators
                 .Replace("#VAR-BRIGHTNESSCURVE-KEY2X", Datas.Query.Star.Specific(starProperties, "Global Properties", "BC KEY 2x"))
                 .Replace("#VAR-BRIGHTNESSCURVE-KEY3X", Datas.Query.Star.Specific(starProperties, "Global Properties", "BC KEY 3x"));
 
-            habZonePlanetHelp(gameDataPath, starCount, starProperties);
+            //habZonePlanetHelp(gameDataPath, starCount, starProperties);
+
+            //Creates Wormholes
+            string wormholeFileUp = null;
+            string wormholeFileDown = null;
+            string targetStar = Convert.ToString(starCount + 2);
+
+            if (doubleDataDic["starNumber"] == starCount + 1)
+                targetStar = "Sun";
+            Wormhole(gameDataPath, starCount, doubleDataDic, starProperties, out wormholeFileDown, out wormholeFileUp);
+
+
+            File.WriteAllText(gameDataPath + @"\Infinity\StarSystems\\Wormholes\Wormhole Down to Star " + Convert.ToString(starCount) + ".cfg", wormholeFileDown);
+            File.WriteAllText(gameDataPath + @"\Infinity\StarSystems\\Wormholes\Wormhole Up to Star " + Convert.ToString(starCount + 2) + ".cfg", wormholeFileUp);
+
 
             return starFile;
-            //File.WriteAllText(stringDataDic["gameDataPath"] + "\\Infinity\\Stars\\Star " + Convert.ToString(starCount) + ".cfg", templateFile);
+        }
+
+        /// <summary>
+        /// Creates wormholes to go to the next star and the previous
+        /// </summary>
+        public static void Wormhole(string gameDataPath, int starCount, Dictionary<string, double> doubleDataDic, Dictionary<string, Dictionary<string, string>> starProperties, out string fileDown, out string fileUp)
+        {
+            
+            string template = File.ReadAllText(gameDataPath + @"\Infinity\Templates\Wormhole.cfg");
+
+            string partner = Convert.ToString(starCount);
+
+            //Do the down way worhole
+            if (starCount + 1 == 1) //If first star generated
+                partner = "Sun";
+            else
+                partner = "Star " + starCount;
+
+            Console.WriteLine(partner);
+            fileDown = template
+                .Replace("NEEDS[!Kopernicus]", "FOR[Infinity]")
+                .Replace("#VAR-PARTNER", partner)
+                .Replace("#VAR-ID", Convert.ToString(starCount + 1))
+                .Replace("#VAR-RADIUS", Datas.Query.Star.Specific(starProperties, "Global Properties", "Radius"))
+                .Replace("#VAR-SMA", "0")
+                .Replace("#VAR-WAY", "Down")
+                .Replace("#VAR-WAZ", "Up");
+
+            //Do the up way worhole
+            partner = "Star " + Convert.ToString(starCount + 2);
+
+            if (starCount + 1 != doubleDataDic["starNumber"]) //If it is not the last star generated
+            {
+                fileUp = template
+                   .Replace("NEEDS[!Kopernicus]", "FOR[Infinity]")
+                   .Replace("#VAR-PARTNER", partner)
+                   .Replace("#VAR-ID", Convert.ToString(starCount + 1))
+                   .Replace("#VAR-RADIUS", Datas.Query.Star.Specific(starProperties, "Global Properties", "Radius"))
+                   .Replace("#VAR-SMA", Convert.ToString(Math.PI))
+                   .Replace("#VAR-WAY", "Up")
+                   .Replace("#VAR-WAZ", "Down");
+            }
+            else
+                fileUp = "";
         }
 
         /// <summary>
@@ -205,7 +262,7 @@ namespace Infinity.Generators
                 .Replace("NEEDS[!Kopernicus]", "FOR[Infinity]")
                 .Replace("#VAR-INC", orbitProperties["Inclination"])
                 .Replace("#VAR-ECC", orbitProperties["Eccentricity"])
-                .Replace("#VAR-SMA", orbitProperties["Semi Major Axis"]) 
+                .Replace("#VAR-SMA", orbitProperties["Semi Major Axis"])
                 .Replace("#VAR-MAE", orbitProperties["Mean Anomaly At Epoch"])
                 .Replace("#VAR-LAN", orbitProperties["Longitude Of Ascending Node"])
                 .Replace("#VAR-EPO", orbitProperties["Epoch"]);
@@ -249,7 +306,7 @@ namespace Infinity.Generators
         public static void Galaxy(
             string gameDataPath, Dictionary<string, double> doubleDataDic, Dictionary<string, Dictionary<string, string>> starDatabase, Random random)
         {
-            
+
             string starFolder = gameDataPath + "\\Infinity\\StarSystems\\Stars";
 
             //Generates stars
@@ -259,13 +316,14 @@ namespace Infinity.Generators
             stopwatch.Start();
             for (int i = 0; i < doubleDataDic["starNumber"]; i++)
             {
-                Console.SetCursorPosition(26, 0);
-                Console.Write(i + 1);
+                //Console.SetCursorPosition(26, 0);
+                //Console.Write(i + 1);
                 Dictionary<string, Dictionary<string, string>> Star = Generator.Star(starDatabase, doubleDataDic, gameDataPath, random);
 
-                File.WriteAllText(gameDataPath + @"\Infinity\StarSystems\Stars\Star " + Convert.ToString(i+1) + ".cfg", Generator.StarFile(Star, gameDataPath, i));
+                File.WriteAllText(gameDataPath + @"\Infinity\StarSystems\Stars\Star " + Convert.ToString(i + 1) + ".cfg", Generator.StarFile(Star, gameDataPath, i, doubleDataDic));
+
             }
-            
+
             //Generates new Sun position
             File.WriteAllText(gameDataPath + @"\Infinity\StarSystems\Stars\Sun.cfg", NewKerbolPosition(gameDataPath, doubleDataDic, random));
             stopwatch.Stop();

@@ -259,12 +259,13 @@ namespace Infinity
             string[] planetFileList = Directory.GetFiles(gameDataPath + @"\Infinity\Planets", "*.cfg");
             string[] moonFileList = Directory.GetFiles(gameDataPath + @"\Infinity\Planets\Moons", "*.cfg");
             string[] planetHabZoneList = Directory.GetFiles(gameDataPath + @"\Infinity\StarSystems\Planets", "*.cfg");
+            string[] wormholes = Directory.GetFiles(gameDataPath + @"\Infinity\StarSystems\Wormholes", "*.cfg");
 
             foreach (string file in starFileList)
             {
                 File.Delete(file);
             }
-            //No touchy
+            //"No touchy" -Carrot       "You sure?" -Tutur
             /*foreach (string file in planetFileList)
             {
                 File.Delete(file);
@@ -274,6 +275,10 @@ namespace Infinity
                 File.Delete(file);
             }*/
             foreach (string file in planetHabZoneList)
+            {
+                File.Delete(file);
+            }
+            foreach (string file in wormholes)
             {
                 File.Delete(file);
             }

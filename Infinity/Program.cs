@@ -4,8 +4,6 @@ using System.Threading;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Infinity.Generators;
-using Infinity.Datas;
-using Infinity.Datas.Query;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -45,7 +43,7 @@ namespace Infinity
             //======================//
 
             //====Loads static datas====//
-            Dictionary<string, Dictionary<string, string>> starDatas = Datas.Star.ComputeStarData();
+            Dictionary<string, Dictionary<string, string>> starDatas = Datas.Old.Star.ComputeStarData();
             //==========================//
 
             //[Already] generates the seed
@@ -76,7 +74,7 @@ namespace Infinity
             Dictionary<string, string> templateFiles = TemplateLoader(gameDataPath);
 
             Console.WriteLine("Generating the galaxy..\n");
-            Generator.Galaxy(gameDataPath, galaxySettings, starDatas, random, templateFiles);
+            Galaxy.Generate(gameDataPath, galaxySettings, starDatas, random, templateFiles);
 
             Console.WriteLine("Galaxy generated. Have fun!\n");
 
@@ -157,7 +155,7 @@ namespace Infinity
                 while (true)
                 {
                     Console.WriteLine("\nWrite here the radius of your Galaxy in Light-Years\n" +
-                        "(minimal value is 0.01 Ly, max is what ksp can support, this means you have to be careful with high values.");
+                        "(Recommended: 0.5 Ly, max is what ksp can support, this means you have to be careful with high values.");
 
                     string input = Console.ReadLine();
 

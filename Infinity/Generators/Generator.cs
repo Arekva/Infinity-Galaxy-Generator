@@ -55,6 +55,7 @@ namespace Infinity.Generators
         /// </summary>
         public static Dictionary<string, double> StarLightCurves(double lum, double rad)
         {
+            if (lum < 1) lum = 1;
             Dictionary<string, double> keys = new Dictionary<string, double>();
 
             //brightnessCurve aka sunflare size curve
@@ -92,7 +93,7 @@ namespace Infinity.Generators
             if (rad > 1)
                 icLum *= rad;
             else
-                lum /= rad;
+                icLum /= rad;
 
             //Calculates and adds to the dictionary
             for (int i = 0; i < ICVars.Length; i++)
@@ -181,7 +182,7 @@ namespace Infinity.Generators
 
         /// <summary>
         /// Creates a Wormhole
-        /// </summary>
+        /// </summary> 
         public static string Wormhole(
             int starCount,
             Dictionary<string, double> galaxySettings, Dictionary<string,Dictionary<string, string>> star,
@@ -190,7 +191,9 @@ namespace Infinity.Generators
             //====Variables====//
             string file;
             string partner;
+            string partnerb;
             string radius = "0";
+            starCount++;
             //=================//
             file = templateFiles["Wormhole"];
 
@@ -205,35 +208,44 @@ namespace Infinity.Generators
 
             if (Up)//If it is the up Wormhole
             {
-                partner = "Star " + Convert.ToString(starCount + 2);
+                //if (starCount != 1)
+                //{
+                    partner = "Star " + Convert.ToString(starCount+1);
 
-                if (starCount + 1 != galaxySettings["starNumber"]) //If it is not the last star generated
-                {
-                    file = file
-                       .Replace("NEEDS[!Kopernicus]", "FOR[Infinity]")
-                       .Replace("#VAR-PARTNER", partner)
-                       .Replace("#VAR-ID", Convert.ToString(starCount + 1))
-                       .Replace("#VAR-RADIUS", radius)
-                       .Replace("#VAR-MEANANOMALYATEPOCH", Convert.ToString(Math.PI))
-                       .Replace("#VAR-WAY", "Up")
-                       .Replace("#VAR-WAZ", "Down");
+                    if (starCount != galaxySettings["starNumber"]) //If it is not the last star generated
+                    {
+                        file = file
+                           .Replace("NEEDS[!Kopernicus]", "FOR[Infinity]")
+                           .Replace("#VAR-PARTNER", partner)
+                           .Replace("#VAR-ID", Convert.ToString(starCount))
+                           .Replace("#VAR-RADIUS", radius)
+                           .Replace("#VAR-MEANANOMALYATEPOCH", Convert.ToString(Math.PI))
+                           .Replace("#VAR-WAY", "Up")
+                           .Replace("#VAR-WAZ", "Down")
+                           .Replace("#VAR-PARBNER", Convert.ToString(starCount));
+                    //}
+                    //else file = "";
                 }
-                else file = "";
             }
 
             else //if it is a down one
             {
-                if (starCount + 1 == 1) partner = "Sun"; //If first star generated
-                else partner = "Star " + (starCount);
+                
+                    string parbner = "Star " + (starCount);
+                    if (starCount == 1) { partner = "Sun"; parbner = "Star 1"; } //If first star generated
+                    else partner = "Star " + (starCount-1);
 
-                file = file
-                    .Replace("NEEDS[!Kopernicus]", "FOR[Infinity]")
-                    .Replace("#VAR-PARTNER", partner)
-                    .Replace("#VAR-ID", Convert.ToString(starCount + 1))
-                    .Replace("#VAR-RADIUS", radius)
-                    .Replace("#VAR-MEANANOMALYATEPOCH", "0")
-                    .Replace("#VAR-WAY", "Down")
-                    .Replace("#VAR-WAZ", "Up");
+
+                    file = file
+                        .Replace("NEEDS[!Kopernicus]", "FOR[Infinity]")
+                        .Replace("#VAR-PARTNER", partner)
+                        .Replace("#VAR-ID", Convert.ToString(starCount))
+                        .Replace("#VAR-RADIUS", radius)
+                        .Replace("#VAR-MEANANOMALYATEPOCH", "0")
+                        .Replace("#VAR-WAY", "Down")
+                        .Replace("#VAR-WAZ", "Up")
+                        .Replace("#VAR-PARBNER", parbner);
+                
             }
 
             return file;
@@ -287,7 +299,7 @@ namespace Infinity.Generators
                 //Down one
                 File.WriteAllText(gameDataPath + @"StarSystems\Wormholes\Wormhole Down to Star " + Convert.ToString(i) + ".cfg", Wormhole(i, galaxySettings, starRaw, templateFiles, false));
                 //And up..
-                File.WriteAllText(gameDataPath + @"StarSystems\Wormholes\Wormhole Up to Star " + Convert.ToString(i) + ".cfg", Wormhole(i, galaxySettings, starRaw, templateFiles, true));
+                File.WriteAllText(gameDataPath + @"StarSystems\Wormholes\Wormhole Up to Star " + Convert.ToString(i+1) + ".cfg", Wormhole(i, galaxySettings, starRaw, templateFiles, true));
             }
             //Generates new Sun position
             File.WriteAllText(gameDataPath + @"StarSystems\Stars\Sun.cfg", NewKerbolPosition(gameDataPath, galaxySettings, random, templateFiles));

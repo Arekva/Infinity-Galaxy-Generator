@@ -26,12 +26,12 @@ namespace Infinity.Datas
                     //If it is the class user wants
                     if (starClass.Key == mainPropertie)
                     {
-                        foreach (KeyValuePair<string, string> starPropertie in starClass.Value)
+                        foreach (KeyValuePair<string, string> starProperty in starClass.Value)
                         {
                             //If propertie is user's wanted
-                            if (starPropertie.Key == wantedPropertie)
+                            if (starProperty.Key == wantedPropertie)
                             {
-                                propertieValue = starPropertie.Value;
+                                propertieValue = starProperty.Value;
                             }
                         }
                     }
@@ -43,9 +43,6 @@ namespace Infinity.Datas
             /// <summary>
             /// Gives all properties for a certain star class
             /// </summary>
-            /// <param name="starDatas"></param>
-            /// <param name="wantedStarClass"></param>
-            /// <param name="properties"></param>
             public static void Global(Dictionary<string, Dictionary<string, string>> starDatas, string wantedStarClass, out Dictionary<string, string> properties)
             {
                 properties = new Dictionary<string, string>();
@@ -55,9 +52,9 @@ namespace Infinity.Datas
                     //If it is the class user wants
                     if (starClass.Key == wantedStarClass)
                     {
-                        foreach (KeyValuePair<string, string> propertie in starClass.Value)
+                        foreach (KeyValuePair<string, string> property in starClass.Value)
                         {
-                            properties.Add(propertie.Key, propertie.Value);
+                            properties.Add(property.Key, property.Value);
                         }
                     }
                 }

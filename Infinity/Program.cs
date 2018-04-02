@@ -20,16 +20,14 @@ namespace Infinity
             //====Things for the program itself====//
             //Uses american decimal system (i hate it)
             Thread.CurrentThread.CurrentCulture = Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
-            Random randomSeed = new Random();
-            Random random;
             //Here are the wanted folders to work in
             string[] folders =
             {
                 @"StarSystems",
-                @"StarSystems\Cache",
-                @"StarSystems\Stars",
-                @"StarSystems\Planets",
-                @"StarSystems\Wormholes",
+                @"StarSystems/Cache",
+                @"StarSystems/Stars",
+                @"StarSystems/Planets",
+                @"StarSystems/Wormholes",
 
                 @"Planets",
                 @"Planets\Moons",
@@ -51,10 +49,13 @@ namespace Infinity
             //==========================//
 
             //[Already] generates the seed
-            int seed = randomSeed.Next(int.MinValue, int.MaxValue);
 
             //Takes infos from the user, return infos and seed
-            seed = UserEntry(defaultGalaxyType, seed, out gameDataPath, out starNumber, out galaxySize, out galaxyType, out random);
+            Random random;
+
+            int seed = UserEntry(defaultGalaxyType, out gameDataPath, out starNumber, out galaxySize, out galaxyType, out random);
+            gameDataPath += @"Infinity/";
+            Console.WriteLine(gameDataPath);
 
             //====Galaxy Settings====//
             Dictionary<string, double> galaxySettings = new Dictionary<string, double>();
@@ -67,32 +68,33 @@ namespace Infinity
 
             OldFilesDeleting(gameDataPath, folders);
 
-            Console.WriteLine("\nGenerating the galaxy..");
+            //Writes shared datas
+            File.WriteAllText(gameDataPath + @"SharedData/StarCount.INFINITY", Convert.ToString(starNumber));
+            File.WriteAllText(gameDataPath + @"SharedData/Seed.INFINITY", Convert.ToString(seed));
+
+            //Loads templates
+            Dictionary<string, string> templateFiles = TemplateLoader(gameDataPath);
+
+            Console.WriteLine("Generating the galaxy..\n");
             Generator.Galaxy(gameDataPath, galaxySettings, starDatas, random);
 
-            Console.WriteLine("\nGalaxy generated. Have fun!");
+            Console.WriteLine("Galaxy generated. Have fun!\n");
+
             //Exit function
-            Console.WriteLine("\nPress any key to exit.");
+            Console.WriteLine("Press any key to exit.");
+            //Saving temporary shared datas
+            
             Console.ReadKey();
         }
 
         /// <summary>
         /// Checks user's entries
         /// </summary>
-        /// <param name="defaultGalaxyType"></param>
-        /// <param name="seed"></param>
-        /// <param name="gameDataPath"></param>
-        /// <param name="starNumber"></param>
-        /// <param name="galaxySize"></param>
-        /// <param name="galaxyType"></param>
-        /// <param name="random"></param>
-        /// <returns></returns>
-        public static int UserEntry(
-            int defaultGalaxyType, int seed, out string gameDataPath, out int starNumber, out double galaxySize, out int galaxyType, out Random random)
+        static int UserEntry(
+            int defaultGalaxyType, out string gameDataPath, out int starNumber, out double galaxySize, out int galaxyType, out Random random)
         {
             //====Things for the program itself====//
             bool devMode = false;
-            bool ok; //For input checking
             //=====================================//
 
             //====Placeholders====//
@@ -100,14 +102,15 @@ namespace Infinity
             starNumber = 0;
             galaxySize = 0;
             galaxyType = 1;
-            random = new Random();
+            int seed = 0;
+            //random = new Random();
             //====================//
 
             //Checks for the developper mode
-            if (File.Exists(@"C:\Infinity\Developer.INFINITY"))
+            if (File.Exists(@"C:/Infinity/Developer.INFINITY"))
             {
                 devMode = true;
-                gameDataPath = File.ReadAllText(@"C:\Infinity\Developer.INFINITY");
+                gameDataPath = File.ReadAllText(@"C:/Infinity/Developer.INFINITY");
             }
 
             //Checks inputs
@@ -121,7 +124,7 @@ namespace Infinity
                         Console.WriteLine("Welcome in Infinity, the procedural Galaxy generator!\n\nPlease enter here your GameData folder path:");
                         gameDataPath = Console.ReadLine();
 
-                        if (InputCheck.GameData(gameDataPath) == true)
+                        if (File.Exists(gameDataPath + @"Squad/squadcore.ksp"))
                             break;
 
                         else
@@ -145,11 +148,7 @@ namespace Infinity
 
                     string input = Console.ReadLine();
 
-                    if (Int32.TryParse(input, out starNumber))
-                    {
-                        File.WriteAllText(gameDataPath + "\\Infinity\\SharedData\\StarCount.INFINITY", Convert.ToString(starNumber));
-                        break;
-                    }
+                    if (Int32.TryParse(input, out starNumber)) break;
 
                     Error("Please put an integrer number");
                 }
@@ -166,7 +165,7 @@ namespace Infinity
                         break;
 
                     Error("Number incorrect, retry with a correct one");
-                }
+                }     
 
                 //User's advanced mode inputs
                 while (true)
@@ -178,6 +177,7 @@ namespace Infinity
                     if (input.Equals("n") || input.Equals("N"))
                     {
                         galaxyType = defaultGalaxyType; //Spiral Galaxy
+                        Random randomSeed = new Random(); seed = randomSeed.Next(int.MinValue, int.MaxValue);
                         break;
                     }
 
@@ -200,18 +200,15 @@ namespace Infinity
                                 Error("Number incorrect, retry with a correct one");
                             }
                         }
-                        while (true) //Seed choice
-                        {
-                            ok = false;
 
-                            Console.WriteLine("\nEnter a custom seed (Leave empty to use random)");
+                        //Seed choice
+                        Console.WriteLine("\nEnter a custom seed (Leave empty to use random)");
 
-                            input = Console.ReadLine();
+                        input = Console.ReadLine();
 
-                            if (input.Equals("")) break;
-                            else seed = input.GetHashCode(); break;
+                        if (input.Equals("")) { Random randomSeed = new Random(); seed = randomSeed.Next(int.MinValue, int.MaxValue); }
+                        else { seed = input.GetHashCode(); }
 
-                        }
                         break;
                     }
                     else
@@ -220,19 +217,12 @@ namespace Infinity
                     }
                 }
 
-                random = new Random(seed);
-
                 //User's choice on delete/generation;
                 while (true)
                 {
-                    ok = false;
                     Console.WriteLine("\nAre you sure to rebuild a whole new galaxy? The old one will be deleted and saves will be unusable (any key/n)");
 
-                    string input = Console.ReadLine();
-
-                    InputCheck.LastChoice(input, out ok, out input);
-
-                    if (input.Equals("n"))
+                    if (Console.ReadLine().Equals("n"))
                     {
                         Console.WriteLine("\nOk well bye, so.");
                         Thread.Sleep(500);
@@ -251,23 +241,20 @@ namespace Infinity
                 Error("Error during the process: " + e.ToString());
             }
 
+            random = new Random(seed);
             return seed;
         }
 
         /// <summary>
         /// Checks if folder are missing
         /// </summary>
-        /// <param name="gameDataPath"></param>
-        /// <param name="folders"></param>
-        public static void FolderCheckingCreating(
+        static void FolderCheckingCreating(
             string gameDataPath, string[] folders)
         {
-            gameDataPath += @"\Infinity\";
-
             //Detects if needed folder exits, and/or creates them if not
             try
             {
-                for (int i = 0; i <= folders.Length; i++)
+                for (int i = 0; i < folders.Length; i++)
                 {
                     if (!Directory.Exists(gameDataPath + folders[i]))
                     {
@@ -284,17 +271,13 @@ namespace Infinity
         /// <summary>
         /// Checks for older files to delete
         /// </summary>
-        /// <param name="gameDataPath"></param>
-        /// <param name="folders"></param>
-        public static void OldFilesDeleting(
+        static void OldFilesDeleting(
             string gameDataPath, string[] folders)
         {
-            gameDataPath += @"\Infinity\";
-
             //Detects existing files and deleted them
             try
             {
-                for (int i = 0; i <= folders.Length; i++)
+                for (int i = 0; i < folders.Length; i++)
                 {
                     string[] files = Directory.GetFiles(gameDataPath + folders[i]);
 
@@ -306,23 +289,45 @@ namespace Infinity
             }
             catch (Exception e)
             {
-                Error("File detection/delted failed: " + e.ToString());
+                Error("File detection/delete failed: " + e.ToString());
             }
+        }
+
+        /// <summary>
+        /// Loads all template files
+        /// </summary>
+        static Dictionary<string, string> TemplateLoader(
+            string gameDataPath)
+        {
+            //Detects and loads template files
+            string[] files = Directory.GetFiles(gameDataPath + @"Templates");
+
+            string loadedFile = null;
+
+            Dictionary<string, string> templates = new Dictionary<string, string>();
+
+            foreach (string file in files)
+            {
+                loadedFile = File.ReadAllText(file);
+                templates.Add(Path.GetFileName(file).Replace(".cfg", null), loadedFile);
+            }
+
+            return templates;
         }
 
         /// <summary>
         /// Displays message when error happens
         /// </summary>
-        /// <param name="message"></param>
-        public static void Error(string message)
+        static void Error(string message)
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine(message);
             Console.ResetColor();
 
-            Thread.Sleep(750);
+            Thread.Sleep(1000);
 
             Console.Clear();
         }
+
     }
 }

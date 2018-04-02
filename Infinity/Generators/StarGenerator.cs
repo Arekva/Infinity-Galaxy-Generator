@@ -73,7 +73,7 @@ namespace Infinity.Generators
         public static Dictionary<string, string> Generate(Dictionary<string, Dictionary<string, string>> starDatas, string gameDataPath, Random random)
         {       
             //Generates the star class
-            double frequency = RandomN.Double(random) * 100;
+            double frequency = random.NextDouble() * 100;
 
             double cumuledFrequencies = 0;
 
@@ -148,10 +148,10 @@ namespace Infinity.Generators
                 }
             }
 
-            temperature = RandomN.Int32(random, minTemperature, maxTemperature);
-            radius = RandomN.Double(random) * (maxRadius - minRadius) + minRadius;
+            temperature = random.Next(minTemperature, maxTemperature + 1);
+            radius = random.NextDouble() * (maxRadius - minRadius) + minRadius;
             luminosity = starLumCalcutation(radius, temperature); //Approximate one, lol.
-            mass = (RandomN.Double(random) * (maxMass - minMass) + minMass)/radius; // the "divided by radius" is just a thing to (i hope) make the star more realistic..
+            mass = (random.NextDouble() * (maxMass - minMass) + minMass)/radius; // the "divided by radius" is just a thing to (i hope) make the star more realistic..
 
             //Calculates and loads the luminosity class
             starLumClass = starLumClassCalc(temperature, minTemperature, maxTemperature);

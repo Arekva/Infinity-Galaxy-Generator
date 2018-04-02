@@ -23,7 +23,7 @@ namespace Infinity.Generators
         {
             //Generates the orbit
             Dictionary<string, double> orbit = new Dictionary<string, double>();
-            orbit = Orbit.RandomOrbit(galaxySettings, random);
+            orbit = Orbit.Star(galaxySettings, random); //Orbit.RandomOrbit(galaxySettings, random);
 
             //Converts with dots instead of commas + in string
             Dictionary<string, string> orbitProperties = new Dictionary<string, string>();
@@ -141,7 +141,7 @@ namespace Infinity.Generators
         /// </summary>
         public static string StarFile(Dictionary<string, Dictionary<string, string>> starProperties, string gameDataPath, int starCount, Dictionary<string, double> doubleDataDic)
         {
-            string template = File.ReadAllText(gameDataPath + "\\Infinity\\Templates\\Star.cfg");
+            string template = File.ReadAllText(gameDataPath + @"Templates\Star.cfg");
 
             string starFile = template
                 .Replace("NEEDS[!Kopernicus]", "FOR[Infinity]")
@@ -187,8 +187,8 @@ namespace Infinity.Generators
             Wormhole(gameDataPath, starCount, doubleDataDic, starProperties, out wormholeFileDown, out wormholeFileUp);
 
 
-            File.WriteAllText(gameDataPath + @"\Infinity\StarSystems\\Wormholes\Wormhole Down to Star " + Convert.ToString(starCount) + ".cfg", wormholeFileDown);
-            File.WriteAllText(gameDataPath + @"\Infinity\StarSystems\\Wormholes\Wormhole Up to Star " + Convert.ToString(starCount + 2) + ".cfg", wormholeFileUp);
+            File.WriteAllText(gameDataPath + @"StarSystems\Wormholes\Wormhole Down to Star " + Convert.ToString(starCount) + ".cfg", wormholeFileDown);
+            File.WriteAllText(gameDataPath + @"StarSystems\Wormholes\Wormhole Up to Star " + Convert.ToString(starCount + 2) + ".cfg", wormholeFileUp);
 
 
             return starFile;
@@ -200,7 +200,7 @@ namespace Infinity.Generators
         public static void Wormhole(string gameDataPath, int starCount, Dictionary<string, double> doubleDataDic, Dictionary<string, Dictionary<string, string>> starProperties, out string fileDown, out string fileUp)
         {
             
-            string template = File.ReadAllText(gameDataPath + @"\Infinity\Templates\Wormhole.cfg");
+            string template = File.ReadAllText(gameDataPath + @"Templates\Wormhole.cfg");
 
             string partner = Convert.ToString(starCount);
 
@@ -242,12 +242,12 @@ namespace Infinity.Generators
         /// </summary>
         public static string NewKerbolPosition(string gameDataPath, Dictionary<string, double> galaxySettings, Random random)
         {
-            string template = File.ReadAllText(gameDataPath + "\\Infinity\\Templates\\BaseSystemOrbit.cfg");
+            string template = File.ReadAllText(gameDataPath + @"Templates\BaseSystemOrbit.cfg");
 
             //Generates the orbit
             Dictionary<string, double> orbit = new Dictionary<string, double>();
 
-            orbit = Orbit.RandomOrbit(galaxySettings, random);
+            orbit = Orbit.Star(galaxySettings, random);
 
             //Converts with dots instead of commas + in string
             Dictionary<string, string> orbitProperties = new Dictionary<string, string>();
@@ -276,7 +276,7 @@ namespace Infinity.Generators
         public static void habZonePlanetHelp(string gameDataPath, int starCount, Dictionary<string, Dictionary<string, string>> starProperties)
         {
             string[] planetFiles = new string[2];
-            string template = File.ReadAllText(gameDataPath + @"\Infinity\Templates\TestPlanetHabZone.cfg");
+            string template = File.ReadAllText(gameDataPath + @"Templates\TestPlanetHabZone.cfg");
 
             string planetFileHot = template
                 .Replace("NEEDS[!Kopernicus]", "FOR[Infinity]")
@@ -299,9 +299,9 @@ namespace Infinity.Generators
                 .Replace("#VAR-SMA", Datas.Query.Star.Specific(starProperties, "Global Properties", "Habitable Zone Max"))
                 .Replace("#VAR-COLOR", "#0000ff");
 
-            File.WriteAllText(gameDataPath + @"\Infinity\StarSystems\Planets\Planet Hot " + Convert.ToString(starCount + 1) + ".cfg", planetFileHot);
-            File.WriteAllText(gameDataPath + @"\Infinity\StarSystems\Planets\Planet Best " + Convert.ToString(starCount + 1) + ".cfg", planetFileBest);
-            File.WriteAllText(gameDataPath + @"\Infinity\StarSystems\Planets\Planet Cold " + Convert.ToString(starCount + 1) + ".cfg", planetFileCold);
+            File.WriteAllText(gameDataPath + @"StarSystems\Planets\Planet Hot " + Convert.ToString(starCount + 1) + ".cfg", planetFileHot);
+            File.WriteAllText(gameDataPath + @"StarSystems\Planets\Planet Best " + Convert.ToString(starCount + 1) + ".cfg", planetFileBest);
+            File.WriteAllText(gameDataPath + @"StarSystems\Planets\Planet Cold " + Convert.ToString(starCount + 1) + ".cfg", planetFileCold);
         }
 
         /// <summary>
@@ -311,7 +311,7 @@ namespace Infinity.Generators
             string gameDataPath, Dictionary<string, double> doubleDataDic, Dictionary<string, Dictionary<string, string>> starDatabase, Random random)
         {
 
-            string starFolder = gameDataPath + "\\Infinity\\StarSystems\\Stars";
+            string starFolder = gameDataPath + @"StarSystems\Stars";
 
             //Generates stars
             Stopwatch stopwatch = new Stopwatch();
@@ -324,12 +324,12 @@ namespace Infinity.Generators
                 Console.Write(i + 1);
                 Dictionary<string, Dictionary<string, string>> Star = Generator.Star(starDatabase, doubleDataDic, gameDataPath, random);
 
-                File.WriteAllText(gameDataPath + @"\Infinity\StarSystems\Stars\Star " + Convert.ToString(i + 1) + ".cfg", Generator.StarFile(Star, gameDataPath, i, doubleDataDic));
+                File.WriteAllText(gameDataPath + @"StarSystems\Stars\Star " + Convert.ToString(i + 1) + ".cfg", Generator.StarFile(Star, gameDataPath, i, doubleDataDic));
 
             }
 
             //Generates new Sun position
-            File.WriteAllText(gameDataPath + @"\Infinity\StarSystems\Stars\Sun.cfg", NewKerbolPosition(gameDataPath, doubleDataDic, random));
+            File.WriteAllText(gameDataPath + @"StarSystems\Stars\Sun.cfg", NewKerbolPosition(gameDataPath, doubleDataDic, random));
             stopwatch.Stop();
             Console.WriteLine("\nDone! Time elapsed: {0:hh\\:mm\\:ss}", stopwatch.Elapsed);
         }

@@ -147,13 +147,13 @@ namespace Infinity.Datas
                 Dictionary<string, string> Properties =
                     new Dictionary<string, string>();
 
-                Properties.Add("Temperature", Convert.ToString(Temperature[i]));
-                Properties.Add("Surface color", VegaRelativeChromacity[i]);
-                Properties.Add("Emitted color", D65Chromacity[i]);
-                Properties.Add("Solar mass", Convert.ToString(SolarMass[i]));
-                Properties.Add("Solar radius", Convert.ToString(SolarRadius[i]));
-                Properties.Add("Luminosity", Convert.ToString(Bolometric[i]));
-                Properties.Add("Rarity", Convert.ToString(Fraction[i]));
+                Properties.Add("TEMPERATURE", Convert.ToString(Temperature[i]));
+                Properties.Add("SURFACECOLOR", VegaRelativeChromacity[i]);
+                Properties.Add("EMITTEDCOLOR", D65Chromacity[i]);
+                Properties.Add("SOLARMASS", Convert.ToString(SolarMass[i]));
+                Properties.Add("SOLARRADIUS", Convert.ToString(SolarRadius[i]));
+                Properties.Add("LUMINOSITY", Convert.ToString(Bolometric[i]));
+                Properties.Add("RARITY", Convert.ToString(Fraction[i]));
 
                 //Linking the class with its properties
                 StarProperties.Add(Class[i], Properties);

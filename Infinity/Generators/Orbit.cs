@@ -14,12 +14,12 @@ namespace Infinity.Generators
             //====List of the orbital elements====//
             string[] elements =
             {
-                "inclination",
-                "eccentricity",
-                "semiMajorAxis",
-                "meanAnomalyAtEpoch",
-                "longitudeOfAscendingNode",
-                "epoch"
+                "INCLINATION",
+                "ECCENTRICITY",
+                "SEMIMAJORAXIS",
+                "MEANANOMALYATEPOCH",
+                "LONGITUDEOFASCENDINGNODE",
+                "EPOCH"
             };
 
             double[] elementsValue =

@@ -110,7 +110,7 @@ namespace Infinity.Generators
             //Checks frequency for each type of star in the database
             for (classID = 0; classID < starDatas.Count; classID++)
             {
-                string starFreqS = Star.Specific(starDatas, allClasses[classID], "Rarity");
+                string starFreqS = Star.Specific(starDatas, allClasses[classID], "RARITY");
                 Double.TryParse(starFreqS, out double starFreq);
 
                 //Gets the surface temperature
@@ -118,11 +118,11 @@ namespace Infinity.Generators
                 if (frequency < cumuledFrequencies)
                 {
                     //Gets the minimal temperature possible
-                    string minTemperatureS = Star.Specific(starDatas, allClasses[classID], "Temperature");
+                    string minTemperatureS = Star.Specific(starDatas, allClasses[classID], "TEMPERATURE");
                     Int32.TryParse(minTemperatureS, out minTemperature);
 
                     //Gets the minimal radius possible
-                    string minRadiusS = Star.Specific(starDatas, allClasses[classID], "Solar radius");
+                    string minRadiusS = Star.Specific(starDatas, allClasses[classID], "SOLARRADIUS");
                     Double.TryParse(minRadiusS, out minRadius);
 
                     //Gets the maximal properties
@@ -134,13 +134,13 @@ namespace Infinity.Generators
                     }
                     else
                     {
-                        string maxTemperatureS = Star.Specific(starDatas, allClasses[classID + 1], "Temperature");
+                        string maxTemperatureS = Star.Specific(starDatas, allClasses[classID + 1], "TEMPERATURE");
                         Int32.TryParse(maxTemperatureS, out maxTemperature);
 
-                        string maxRadiusS = Star.Specific(starDatas, allClasses[classID + 1], "Solar radius");
+                        string maxRadiusS = Star.Specific(starDatas, allClasses[classID + 1], "SOLARRADIUS");
                         Double.TryParse(maxRadiusS, out maxRadius);
 
-                        string maxMassS = Star.Specific(starDatas, allClasses[classID + 1], "Solar mass");
+                        string maxMassS = Star.Specific(starDatas, allClasses[classID + 1], "SOLARMASS");
                         Double.TryParse(maxMassS, out maxMass);
                     }
 
@@ -165,16 +165,16 @@ namespace Infinity.Generators
             //Adding all the properties in a dictionnary
             Dictionary<string, string> properties = new Dictionary<string, string>();
 
-            properties.Add("Star Class", Convert.ToString(allClasses[classID]));
-            properties.Add("Temperature", Convert.ToString(temperature));
-            properties.Add("Radius", Convert.ToString(radius));
-            properties.Add("Luminosity", Convert.ToString(luminosity));
-            properties.Add("Mass", Convert.ToString(mass));
-            properties.Add("Color Red", Convert.ToString(rgb[0]));
-            properties.Add("Color Green", Convert.ToString(rgb[1]));
-            properties.Add("Color Blue", Convert.ToString(rgb[2]));
-            properties.Add("Star Luminosity Class", starLumClass);
-            properties.Add("Corona Path", @"Infinity\Templates\Coronas\V\" + allClasses[classID] + @"\" + starLumClass + ".png");
+            properties.Add("STARCLASS", Convert.ToString(allClasses[classID]));
+            properties.Add("TEMPERATURE", Convert.ToString(temperature));
+            properties.Add("RADIUS", Convert.ToString(radius));
+            properties.Add("LUMINOSITY", Convert.ToString(luminosity));
+            properties.Add("MASS", Convert.ToString(mass));
+            properties.Add("COLOR-RED", Convert.ToString(rgb[0]));
+            properties.Add("COLOR-GREEN", Convert.ToString(rgb[1]));
+            properties.Add("COLOR-BLUE", Convert.ToString(rgb[2]));
+            properties.Add("STARLUMCLASS", starLumClass);
+            properties.Add("CORONA", @"Infinity\Templates\Coronas\V\" + allClasses[classID] + @"\" + starLumClass + ".png");
             properties.Add("Habitable Zone Min", Convert.ToString(minHabZone));
             properties.Add("Habitable Zone Best", Convert.ToString(bestHabZone));
             properties.Add("Habitable Zone Max", Convert.ToString(maxHabZone));

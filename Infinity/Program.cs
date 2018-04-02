@@ -76,7 +76,7 @@ namespace Infinity
             Dictionary<string, string> templateFiles = TemplateLoader(gameDataPath);
 
             Console.WriteLine("Generating the galaxy..\n");
-            Generator.Galaxy(gameDataPath, galaxySettings, starDatas, random);
+            Generator.Galaxy(gameDataPath, galaxySettings, starDatas, random, templateFiles);
 
             Console.WriteLine("Galaxy generated. Have fun!\n");
 

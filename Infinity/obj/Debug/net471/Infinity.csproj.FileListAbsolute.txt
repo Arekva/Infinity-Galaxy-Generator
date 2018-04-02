@@ -1,8 +1,0 @@
-E:\Code\KSP\Plugins\Infinity\Infinity\Infinity\obj\Debug\net471\Infinity.csproj.CoreCompileInputs.cache
-E:\Code\KSP\Plugins\Infinity\Infinity\Infinity\obj\Debug\net471\Infinity.AssemblyInfoInputs.cache
-E:\Code\KSP\Plugins\Infinity\Infinity\Infinity\obj\Debug\net471\Infinity.AssemblyInfo.cs
-E:\Code\KSP\Plugins\Infinity\Infinity\Builds\net471\Infinity.exe
-E:\Code\KSP\Plugins\Infinity\Infinity\Builds\net471\Infinity.pdb
-E:\Code\KSP\Plugins\Infinity\Infinity\Infinity\obj\Debug\net471\Infinity.exe
-E:\Code\KSP\Plugins\Infinity\Infinity\Infinity\obj\Debug\net471\Infinity.pdb
-E:\Code\KSP\Plugins\Infinity\Infinity\Infinity\obj\Debug\net471\Infinity.csprojResolveAssemblyReference.cache

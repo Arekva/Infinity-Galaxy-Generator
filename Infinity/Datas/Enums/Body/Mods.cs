@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Infinity.Datas.Planet
+namespace Infinity.Datas.Enums.Body
 {
-    class Body
+    enum Mods
     {
-        public string name { get; set; }
+        VertexHeightNoise,
+        HeightColorMap,
+        VertexHeightOffset
     }
 }

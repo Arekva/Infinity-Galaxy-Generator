@@ -78,6 +78,7 @@ namespace Infinity
 
             Console.WriteLine("Galaxy generated. Have fun!\n");
 
+            Planet.CreatePlanet();
             //Exit function
             Console.WriteLine("Press any key to exit.");
             //Saving temporary shared datas

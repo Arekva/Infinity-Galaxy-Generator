@@ -17,6 +17,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ConfigNodeParser\**" />
+    <EmbeddedResource Remove="ConfigNodeParser\**" />
+    <None Remove="ConfigNodeParser\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="StarGenerator.cs" />
   </ItemGroup>
 

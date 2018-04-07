@@ -27,7 +27,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Third-Party\PlanetaryProcessor.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="PlanetaryProcessor">
+      <HintPath>Third-Party\PlanetaryProcessor.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

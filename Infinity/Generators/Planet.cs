@@ -17,8 +17,6 @@ namespace Infinity.Generators
         Body.ScaledVersion scaledVersion = new Body.ScaledVersion();
         Datas.PQSMods.VertexHeightNoise vhn = new Datas.PQSMods.VertexHeightNoise();
 
-
-
         ConfigNode MMNode = new ConfigNode("@Kopernicus:FOR[INFINITY]");
         ConfigNode BodyNode = new ConfigNode("Body");
         ConfigNode TemplateNode = new ConfigNode("Template");
@@ -29,21 +27,21 @@ namespace Infinity.Generators
         ConfigNode PQSModsNode = new ConfigNode("Mods");
         ConfigNode PQSModsVertexHeightNoiseNode = new ConfigNode("VertexHeightNoise");
 
-        public static void CreatePlanet()
+        public static void CreatePlanet(string planetName, string starName)
         {
             Planet planet = new Planet();
-            planet.Body();
+            planet.Body(planetName, starName);
             planet.Template();
-            planet.Orbit();
-            planet.ScaledVersion();
+            planet.Orbit(starName);
+            planet.ScaledVersion(planetName, starName);
             planet.PQSMods();
             planet.SavePlanet();
         }
 
-        public void Body()
+        public void Body(string planetName, string starName)
         {
-            body.Name = "Test Planet";
-            body.CacheFile = @"Infinity/StarSystems/Cache/Sun/TestPlanet.bin";
+            body.Name = planetName;
+            body.CacheFile = @"Infinity/StarSystems/Cache/" + starName + @"/" + planetName + @".bin";
 
             BodyNode.AddValue("name", body.Name);
             BodyNode.AddValue("cacheFile", body.CacheFile);
@@ -59,7 +57,7 @@ namespace Infinity.Generators
             TemplateNode.AddValue("removeAllPQSMods", template.removeAllPQSMods.ToString());
         }
 
-        public void Orbit()
+        public void Orbit(string starName)
         {
             orbit.ReferenceBody = "Sun";
             orbit.Inclination = 2;
@@ -82,11 +80,11 @@ namespace Infinity.Generators
             OrbitNode.AddValue("color", orbit.Color);
         }
 
-        public void ScaledVersion()
+        public void ScaledVersion(string planetName, string starName)
         {
             scaledVersion.Type = Enums.Body.ScaledVersionTypes.Vacuum;
-            scaledVersion.Texture = @"Infinity\StarSystems\Planets\Test_Texture.png";
-            scaledVersion.Normals = @"Infinity\StarSystems\Planets\Test_Normals.png";
+            scaledVersion.Texture = @"Infinity\StarSystems\Planets\" + starName + @"\" + planetName + @"_Color.png";
+            scaledVersion.Normals = @"Infinity\StarSystems\Planets\" + starName + @"\" + planetName + @"_Normal.png";
 
             ScaledVersionNode.AddValue("Type", scaledVersion.Type.ToString());
             ScaledVersionMaterialNode.AddValue("texture", scaledVersion.Texture);
@@ -95,8 +93,6 @@ namespace Infinity.Generators
 
         public void PQSMods()
         {
-            
-
             vhn.deformity = 1000;
             vhn.frequency = 4;
             vhn.octaves = 1;

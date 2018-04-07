@@ -10,11 +10,276 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Threading;
 using System.Diagnostics;
+using Infinity.Datas.Body;
+using ConfigNodeParser;
 
 namespace Infinity.Generators
 {
     class Galaxy
     {
+        /// <summary>
+        /// Generates a planet
+        /// </summary>
+        public static void Planet(int starCount, int planetID, string gameDataPath, Random random)
+        {
+            Dictionary<string, Dictionary<string, string>> configFile = new Dictionary<string, Dictionary<string, string>>();
+            Dictionary<string, string> processorSettings = new Dictionary<string, string>();
+            Dictionary<string, Dictionary<string, string>> pqsMods = new Dictionary<string, Dictionary<string, string>>();
+
+            //====PQS things===========================//
+            double mainColorR = random.NextDouble();
+            double mainColorG = random.NextDouble();
+            double mainColorB = random.NextDouble();
+
+            double secondaryColorR = random.NextDouble();
+            double secondaryColorG = random.NextDouble();
+            double secondaryColorB = random.NextDouble();
+            //=========================================//
+
+            //====Keys and values for the body node====//
+            Body body = new Body();
+
+            Dictionary<string, string> bodyNode = new Dictionary<string, string>();
+            body.Name = "Star " + starCount + " Planet N." + planetID;
+            body.CacheFile = @"Infinity/StarSystems/Cache/" + "Star " + starCount + " Planet N." + planetID + ".bin";
+
+            bodyNode.Add("name", body.Name);
+            bodyNode.Add("cacheFile", body.CacheFile);
+
+            configFile.Add("Body", bodyNode);
+            //=========================================//
+
+            //====Keys and values for properties node==//
+            Dictionary<string, string> propertiesNode = new Dictionary<string, string>();
+
+            double minRadius = 25000;
+            double maxRadius = 1500000;
+            double radius = random.NextDouble() * (minRadius - maxRadius) + maxRadius;
+            bool isHomeWorld = false;
+
+            propertiesNode.Add("radius", radius.ToString());
+            propertiesNode.Add("density", 5.515e+3.ToString()); //Yes, fact is the real name of this is volumic mass and not density.. ikr | I take Earth's one for testing issues.
+            propertiesNode.Add("isHomeWorld", isHomeWorld.ToString());
+
+            configFile.Add("Properties", propertiesNode);
+            //=========================================//
+
+            //==Keys and values for the template node==//
+            Template template = new Template();
+
+            Dictionary<string, string> templateNode = new Dictionary<string, string>();
+            template.Name = Datas.Enums.Template.Tylo;
+            template.removeAllPQSMods = true;
+            template.removeOcean = true;
+
+            templateNode.Add("name", template.Name.ToString());
+            templateNode.Add("removeAllPQSMods", template.removeAllPQSMods.ToString());
+            templateNode.Add("removeOcean", template.removeOcean.ToString());
+
+            configFile.Add("Template", templateNode);
+            //=========================================//
+
+            //====Keys and values for the orbit node===//
+            Dictionary<string, double> orbitD = Orbit.Planet(random);
+
+            string referenceBody = "Star " + starCount.ToString();
+            string orbitColor = mainColorR + ", " + mainColorG + ", " + mainColorB + ", 1";
+
+            Dictionary<string, string> orbitNode = new Dictionary<string, string>();
+            foreach (KeyValuePair<string, double> param in orbitD)
+            {
+                orbitNode.Add(param.Key, param.Value.ToString());
+            }
+
+            orbitNode.Add("referenceBody", referenceBody);
+            orbitNode.Add("color", orbitColor);
+
+            configFile.Add("Orbit", orbitNode);
+            //=========================================//
+
+            //==Keys and value for ScaledVersion nodes=//
+            ScaledVersion scaledVersion = new ScaledVersion();
+
+            Dictionary<string, string> scaledVersionNode = new Dictionary<string, string>();
+            Dictionary<string, string> scaledVersionMaterialNode = new Dictionary<string, string>();
+
+            scaledVersion.Type = Datas.Enums.Body.ScaledVersionTypes.Vacuum;
+            scaledVersion.Texture = @"Infinity\StarSystems\Planets\Star " + starCount + " Planet N." + planetID + "_Color.png";
+            scaledVersion.Normals = @"Infinity\StarSystems\Planets\Star " + starCount + " Planet N." + planetID + "_Normal.png";
+
+            scaledVersionNode.Add("type", scaledVersion.Type.ToString());
+            scaledVersionMaterialNode.Add("texture", scaledVersion.Texture.ToString());
+            scaledVersionMaterialNode.Add("normals", scaledVersion.Normals.ToString());
+
+            configFile.Add("ScaledVersion", scaledVersionNode);
+            configFile.Add("SVMaterial", scaledVersionMaterialNode);
+            //=========================================//
+
+            //====PQS Nodes keys and values============//
+            string modName = "";
+
+            Dictionary<string, string> VertexSimplexHeightAbsolute = new Dictionary<string, string>();
+
+            modName = "VertexSimplexHeightAbsolute";
+
+            VertexSimplexHeightAbsolute.Add("deformity", "8000");
+            VertexSimplexHeightAbsolute.Add("frequency", "10");
+            VertexSimplexHeightAbsolute.Add("octaves", "3");
+            VertexSimplexHeightAbsolute.Add("persistence", "0.5");
+            VertexSimplexHeightAbsolute.Add("seed", "645546");
+            VertexSimplexHeightAbsolute.Add("order", "10");
+            VertexSimplexHeightAbsolute.Add("enabled", "True");
+
+            pqsMods.Add(modName, VertexSimplexHeightAbsolute);
+
+            Dictionary<string, string> VertexSimplexNoiseColor = new Dictionary<string, string>();
+
+            modName = "VertexSimplexNoiseColor";
+
+            string colorStart = orbitColor;
+            string colorEnd = secondaryColorR + ", " + secondaryColorG + ", " + secondaryColorB + ", 1";
+            VertexSimplexNoiseColor.Add("blend", "1");
+            VertexSimplexNoiseColor.Add("colorStart", colorStart);
+            VertexSimplexNoiseColor.Add("colorEnd", colorEnd);
+            VertexSimplexNoiseColor.Add("frequency", "1");
+            VertexSimplexNoiseColor.Add("octaves", "8");
+            VertexSimplexNoiseColor.Add("persistence", "0.5");
+            VertexSimplexNoiseColor.Add("seed", random.Next(int.MinValue, int.MaxValue).ToString());
+            VertexSimplexNoiseColor.Add("order", "100");
+            VertexSimplexNoiseColor.Add("enabled", "True");
+
+            pqsMods.Add(modName, VertexSimplexNoiseColor);
+            //=========================================//
+
+            //====Processor settings===================//
+            double res = 1024;
+
+            double lowRes = 512;
+            double lowResRad = 135000;
+
+            double midRes = 1024;
+            double midResRad = 300000;
+
+            double highRes = 2048;
+            double highResRad = 750000;
+
+            double ultraRes = 4096;
+            double ultraResRad = maxRadius;
+
+            if (radius <= lowResRad) res = lowRes;
+            if (radius > lowResRad && radius <= midResRad) res = midRes;
+            if (radius > midResRad && radius <= highResRad) res = highRes;
+            if (radius > highResRad && radius <= ultraRes) res = ultraRes;
+
+            processorSettings.Add("__resolution", res.ToString());
+            processorSettings.Add("__radius", radius.ToString());
+            processorSettings.Add("__hasOcean", "false");
+            processorSettings.Add("__oceanHeight", "0");
+            processorSettings.Add("__oceanColor", "0,0,0,0");
+            processorSettings.Add("__normalStrength", "7");
+            processorSettings.Add("mapMaxHeight", "9000");
+            //=========================================//
+
+            //Makes and saves config file
+            ConfigNode conf = PlanetConfig(configFile, pqsMods);
+            conf.Save(gameDataPath + @"StarSystems/Planets/Star " + starCount + " Planet N." + planetID + ".cfg");
+
+            //Makes and saves maps
+            string[] args =  { "" };
+            PlanetMaps.Save(args, gameDataPath, body.Name, processorSettings, pqsMods);
+        }
+
+        /// <summary>
+        /// Generates the planet config
+        /// </summary>
+        public static ConfigNode PlanetConfig(Dictionary<string, Dictionary<string, string>> configFile, Dictionary<string, Dictionary<string, string>> pqsMods)
+        {
+            ConfigNode MMNode = new ConfigNode("@Kopernicus:FOR[INFINITY]");
+            ConfigNode BodyNode = new ConfigNode("Body");
+            ConfigNode standardNode = new ConfigNode();
+            ConfigNode standardSubNode = new ConfigNode();
+            ConfigNode scaledVersionNode = new ConfigNode();
+            ConfigNode PQSModNode = new ConfigNode();
+
+            ConfigNode wrapper = new ConfigNode();
+
+            wrapper.AddConfigNode(MMNode);
+
+            foreach(KeyValuePair<string, Dictionary<string, string>> category in configFile)
+            {
+                if (category.Key == "Body")
+                {
+                    foreach (KeyValuePair<string, string> value in category.Value)
+                    {
+                        BodyNode.AddValue(value.Key, value.Value);
+                    }
+
+                    MMNode.AddConfigNode(BodyNode);
+                }
+
+                else
+                {
+                    
+                    if (category.Key != "SVMaterial")
+                    {
+                        if (category.Key == "ScaledVersion")
+                        {
+                            scaledVersionNode = new ConfigNode(category.Key);
+
+                            foreach (KeyValuePair<string, string> value in category.Value)
+                            {
+                                scaledVersionNode.AddValue(value.Key, value.Value);
+                            }
+
+                            BodyNode.AddConfigNode(scaledVersionNode);
+                        }
+                        else
+                        {
+                            standardNode = new ConfigNode(category.Key);
+
+                            foreach (KeyValuePair<string, string> value in category.Value)
+                            {
+                                standardNode.AddValue(value.Key, value.Value);
+                            }
+
+                            BodyNode.AddConfigNode(standardNode);
+                        }
+                    }
+                    
+                    else
+                    {
+                        standardSubNode = new ConfigNode("Material");
+
+                        foreach (KeyValuePair<string, string> value in category.Value)
+                        {
+                            standardSubNode.AddValue(value.Key, value.Value);
+                        }
+
+                        scaledVersionNode.AddConfigNode(standardSubNode);
+                    }
+                }
+            }
+
+            PQSModNode = new ConfigNode("Mods");
+
+            foreach (KeyValuePair<string, Dictionary<string, string>> mod in pqsMods)
+            {
+                standardNode = new ConfigNode(mod.Key);
+                foreach(KeyValuePair<string, string> parameter in mod.Value)
+                {
+                    standardNode.AddValue(parameter.Key, parameter.Value);
+                }
+
+                PQSModNode.AddConfigNode(standardNode);
+            }
+
+            standardNode = new ConfigNode("PQS");
+            standardNode.AddConfigNode(PQSModNode);
+            BodyNode.AddConfigNode(standardNode);
+
+            return wrapper;
+        }
+
         /// <summary>
         ///Generates a random star
         /// </summary>
@@ -296,6 +561,14 @@ namespace Infinity.Generators
                 File.WriteAllText(gameDataPath + @"StarSystems\Wormholes\Wormhole Down to Star " + Convert.ToString(i) + ".cfg", Wormhole(i, galaxySettings, starRaw, templateFiles, false));
                 //And up..
                 File.WriteAllText(gameDataPath + @"StarSystems\Wormholes\Wormhole Up to Star " + Convert.ToString(i+1) + ".cfg", Wormhole(i, galaxySettings, starRaw, templateFiles, true));
+
+                //Creates planet
+                int planetNumber = random.Next(1, 5);
+
+                for(int j = 0; j < planetNumber; j++)
+                {
+                    Planet(i + 1, j + 1, gameDataPath, random);
+                }
             }
             //Generates new Sun position
             File.WriteAllText(gameDataPath + @"StarSystems\Stars\Sun.cfg", NewKerbolPosition(gameDataPath, galaxySettings, random, templateFiles));

@@ -8,6 +8,9 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using PlanetaryProcessor;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace Infinity
 {
@@ -18,6 +21,8 @@ namespace Infinity
             //====Things for the program itself====//
             //Uses american decimal system (i hate it)
             Thread.CurrentThread.CurrentCulture = Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+            string userName = Environment.UserName;
+
             //Here are the wanted folders to work in
             string[] folders =
             {
@@ -74,11 +79,12 @@ namespace Infinity
             Dictionary<string, string> templateFiles = TemplateLoader(gameDataPath);
 
             Console.WriteLine("Generating the galaxy..\n");
+            PlanetaryProcessorDeleting();
             Galaxy.Generate(gameDataPath, galaxySettings, starDatas, random, templateFiles);
+            PlanetaryProcessorDeleting();
 
             Console.WriteLine("Galaxy generated. Have fun!\n");
 
-            Planet.CreatePlanet();
             //Exit function
             Console.WriteLine("Press any key to exit.");
             //Saving temporary shared datas
@@ -328,5 +334,23 @@ namespace Infinity
             Console.Clear();
         }
 
+        static void PlanetaryProcessorDeleting()
+        {
+            //Deletes old process and folder of planetaryprocessor
+            try
+            {
+                Process[] prs = Process.GetProcesses();
+                foreach (Process pr in prs)
+                    if (pr.ProcessName == "PlanetaryProcessor.App")
+                        pr.Kill();
+
+                string dotplanetaryprocessor = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @".planetaryprocessor";
+                if (File.Exists(dotplanetaryprocessor)) File.Delete(dotplanetaryprocessor);
+            }
+            catch
+            {
+                Error("Acces to processus killing refused");
+            }
+        }
     }
 }

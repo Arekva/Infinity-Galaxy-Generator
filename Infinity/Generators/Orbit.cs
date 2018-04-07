@@ -1,10 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
+using Body = Infinity.Datas.Body;
 
 namespace Infinity.Generators
 {
     class Orbit
     {
+        public static Dictionary<string, double> Planet(Random random)
+        {
+            Body.Orbit orbitEnu = new Body.Orbit();
+
+            Dictionary<string, double> orbit = new Dictionary<string, double>();
+            orbit.Add("inclination", orbitEnu.Inclination = Inclination(0, 1, random));
+            orbit.Add("eccentricity", orbitEnu.Eccentricity = Eccentricity(0, 0.05, random));
+            orbit.Add("semiMajorAxis", orbitEnu.Inclination = SemiMajorAxis(0, 1e+9, random));
+            orbit.Add("logitudeOfAscendingNode", orbitEnu.LongitudeOfAscendingNode = LongitudeOfAscendingNode(0, Math.PI * 2, random));
+            orbit.Add("argumentOfPeriapsis", orbitEnu.ArgumentOfPeriapsis = ArgumentOfPeriapsis(0, Math.PI * 2, random));
+            orbit.Add("epoch", orbitEnu.Epoch = Epoch(0, 2000, random));
+            orbit.Add("meanAnomalyAtEpoch", orbitEnu.Inclination = MeanAnomalyAtEpoch(0, Math.PI * 2, random));
+
+            return orbit;
+
+        }
         /// <summary>
         /// Generate an orbit made for a star
         /// </summary>
@@ -147,6 +164,12 @@ namespace Infinity.Generators
         /// Generates a random Epoch
         /// </summary>
         public static double Epoch(double min, double max, Random r)
+        {
+            double v;
+            return v = r.NextDouble() * (min - max) + max;
+        }
+
+        public static double ArgumentOfPeriapsis(double min, double max, Random r)
         {
             double v;
             return v = r.NextDouble() * (min - max) + max;

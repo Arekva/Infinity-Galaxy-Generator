@@ -18,6 +18,7 @@ namespace Infinity
     {
         public static void Main(string[] args)
         {
+			Console.Title = "Infinity Galaxy Generator";
             //====Things for the program itself====//
             //Uses american decimal system (i hate it)
             Thread.CurrentThread.CurrentCulture = Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
